@@ -8,7 +8,7 @@ import 'package:flame/text_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mad_legend/collections.dart';
-import 'package:mad_legend/game_blocks.dart';
+import 'package:mad_legend/bottom_cards.dart';
 import 'package:mad_legend/game_logic.dart';
 import 'package:mad_legend/main.dart';
 

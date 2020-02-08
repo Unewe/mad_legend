@@ -31,8 +31,13 @@ class Cards {
         }
         return "С верояьностью ${(this.chance * 100).floor()}% нанесет ${(dmgLowTmp).floor()} урона.";
       case Features.shieldDefault:
-        //Может и щит улучшить
-        return "Вы получите ${(this.dmgLow).floor()} брони.";
+        double dmgLowTmp = this.dmgLow.toDouble();
+        if(player.getImprovements().isNotEmpty) {
+          for(Cards improvement in player.getImprovements()) {
+            dmgLowTmp += dmgLowTmp * improvement.chance;
+          }
+        }
+        return "Вы получите ${(dmgLowTmp).floor()} брони.";
       case Features.prepareDefault:
         return "Вы получите 1 очко инициативы, и 1 карту на выбор.";
       case Features.curseDefault:
@@ -68,7 +73,7 @@ class Cards {
   }
 
   static Cards defaultShieldCard() {
-    return Cards(3, "Щит", 1, 8, 12, Features.shieldDefault, Cost.initiative, 1);
+    return Cards(3, "Щит", 1, 8, 8, Features.shieldDefault, Cost.initiative, 1);
   }
 
   static Cards defaultPrepareCard() {

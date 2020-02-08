@@ -72,6 +72,12 @@ class GameLogic {
         opponent.hit(dmg);
         break;
       case Features.shieldDefault:
+        if(current.getImprovements().length > 0) {
+          current.getImprovements().forEach((improvement) =>
+          dmg += (dmg * improvement.chance).round()
+          );
+        }
+        current._improvements.clear();
         current.shieldUp(dmg);
         break;
       case Features.prepareDefault:
