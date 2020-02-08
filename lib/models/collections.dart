@@ -1,4 +1,4 @@
-import 'package:mad_legend/game_logic.dart';
+import 'package:mad_legend/services/game_logic.dart';
 
 class Cards {
   int id;
@@ -49,6 +49,7 @@ class Cards {
       case Features.lastBreathDefault:
         return "Наносит ${this.dmgHigh}, за каждое проклятие в колоде противника";
     }
+    return "Рок это круто!!!";
   }
 
   Cards(this.id, this.name, this.chance, this.dmgLow,
@@ -119,10 +120,10 @@ enum Features {
   rangedDefault,
   shieldDefault,
   prepareDefault,
-  //Проклятие.
+  ///Проклятие.
   curseDefault,
   simpleCurse,
-  //Улучшение.
+  ///Улучшение.
   improvementDefault,
   lastBreathDefault
 }

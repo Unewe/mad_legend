@@ -1,7 +1,7 @@
 import 'dart:math';
-
-import 'package:mad_legend/screens.dart';
-import 'package:mad_legend/collections.dart';
+import 'package:mad_legend/models/collections.dart';
+import 'package:mad_legend/screens/end_game_screen.dart';
+import 'package:mad_legend/screens/game_screen.dart';
 
 class GameLogic {
   GameScreen gameScreen;

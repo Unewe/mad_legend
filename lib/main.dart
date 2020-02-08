@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mad_legend/screens.dart';
 import 'package:flame/game.dart';
 import 'package:flame/util.dart';
 import 'package:flutter/gestures.dart';
+import 'package:mad_legend/screens/home_screen.dart';
+import 'screens/screen_base.dart';
 
 void main() async {
   MyGame game = MyGame();

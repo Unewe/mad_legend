@@ -1,13 +1,12 @@
 import 'dart:math';
 import 'dart:ui';
-
 import 'package:flame/anchor.dart';
 import 'package:flame/components/component.dart';
 import 'package:flame/components/text_box_component.dart';
 import 'package:flame/text_config.dart';
 import 'package:flutter/material.dart';
-import 'package:mad_legend/collections.dart';
-import 'package:mad_legend/screens.dart';
+import 'package:mad_legend/models/collections.dart';
+import 'package:mad_legend/screens/game_screen.dart';
 
 class BottomBlock extends Component {
 
