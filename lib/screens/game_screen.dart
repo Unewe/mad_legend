@@ -9,6 +9,7 @@ import 'package:mad_legend/screen_bocks/cards_block.dart';
 import 'package:mad_legend/services/game_logic.dart';
 import 'package:mad_legend/main.dart';
 import 'package:mad_legend/screen_bocks/player_bock.dart';
+import 'package:mad_legend/store/player.dart';
 
 class GameScreen extends Screen{
 
@@ -28,12 +29,13 @@ class GameScreen extends Screen{
   GameScreen(MyGame game) : super(game) {
     init();
     bgPaint.color = Color.fromRGBO(69, 184, 179, 1);
-    bottomBlock = BottomBlock(this, 0, h * 0.7, w, h * 0.3);
   }
 
   init() async {
+    download = true;
+    Player currentPlayer = await getPlayer();
 
-    gameLogic = GameLogic(Player("Left", PlayerClass.DEFAULT), Player("right", PlayerClass.DEFAULT), this);
+    gameLogic = GameLogic(currentPlayer, Player("right", PlayerClass.DEFAULT), this);
     endTurnButton = Rect.fromLTWH(
         w - h * 0.05 - w * 0.1,
         h - h * 0.05 - h * 0.1,
@@ -45,6 +47,7 @@ class GameScreen extends Screen{
     leftPlayerBlock = PlayerBlock(this, leftPlayerSprite, false);
     rightPlayerSprite = Sprite.fromImage(imageRight);
     rightPlayerBlock = PlayerBlock(this, rightPlayerSprite, true);
+    bottomBlock = BottomBlock(this, 0, h * 0.7, w, h * 0.3);
     download = false;
   }
 
@@ -81,28 +84,38 @@ class GameScreen extends Screen{
 
   @override
   onTapUp(TapUpDetails details) {
-    bottomBlock.onTapUp(details);
+    if(!download) {
+      bottomBlock.onTapUp(details);
+    }
   }
 
   @override
   onTapDown(TapDownDetails details) {
-    bottomBlock.onTapDown(details);
+    if(!download) {
+      bottomBlock.onTapDown(details);
 
-    if(endTurnButton.contains(details.globalPosition)) {
-      endTurn();
+      if(endTurnButton.contains(details.globalPosition)) {
+        endTurn();
+      }
     }
   }
 
   @override
   onVerticalUpdate(DragUpdateDetails details) {
-    bottomBlock.onVerticalUpdate(details);
+    if(!download) {
+      bottomBlock.onVerticalUpdate(details);
+    }
   }
 
   onStart(DragStartDetails details) {
-    bottomBlock.onStart(details);
+    if(!download) {
+      bottomBlock.onStart(details);
+    }
   }
   onEnd(DragEndDetails details) {
-    bottomBlock.onEnd(details);
+    if(!download) {
+      bottomBlock.onEnd(details);
+    }
   }
 
   @override
