@@ -18,6 +18,15 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
+  fonts:
+    - family: Malloy
+      fonts:
+        - asset: assets/fonts/17607.otf
+
+    - family: YagiDouble
+      fonts:
+        - asset: assets/fonts/17849.ttf
+
   uses-material-design: true
 
   assets:

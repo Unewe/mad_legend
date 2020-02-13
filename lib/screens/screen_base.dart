@@ -35,9 +35,6 @@ abstract class Screen extends Component {
     canvas.drawRect(bgRect, bgPaint);
   }
 
-  init() {}
-  initResizable() {}
-
   @override
   void resize(Size size) {
     super.resize(size);
