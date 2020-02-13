@@ -21,7 +21,7 @@ class EndGameScreen extends Screen{
         color: Color.fromRGBO(189, 31, 63, 1),
         fontSize: 40
     ));
-    textComponent.setByRect(Rect.fromLTWH(w * 0.1, h * 0.1, w * 0.8, h * 0.8));
+    textComponent.setByRect(Rect.fromLTWH(width * 0.1, height * 0.1, width * 0.8, height * 0.8));
   }
 
   @override

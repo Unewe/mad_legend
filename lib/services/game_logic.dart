@@ -30,7 +30,7 @@ class GameLogic {
     }
   }
 
-  dropCard(Cards card) async {
+  dropCard(Cards card) {
     /// Универсальное определение урона
     int dmg = 0;
     if (random.nextInt(100) < card.chance * 100) {

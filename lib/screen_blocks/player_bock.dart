@@ -32,12 +32,12 @@ class PlayerBlock extends PositionComponent {
   int previousHealth, defaultHealth;
 
   PlayerBlock(this.screen, this.sprite, this.rightPlayer) {
-    rect = Rect.fromLTWH(screen.h * 0.1, screen.h * 0.1, screen.h * 0.45, rightPlayer ? screen.h * 0.6 : screen.h * 0.61 );
-    healthBorder = Rect.fromLTWH(screen.h * 0.1, screen.h * 0.01, screen.h * 0.45, screen.h * 0.08);
-    health = Rect.fromLTWH(screen.h * 0.11, screen.h * 0.02, screen.h * 0.43, screen.h * 0.06);
+    rect = Rect.fromLTWH(screen.height * 0.1, screen.height * 0.1, screen.height * 0.45, rightPlayer ? screen.height * 0.6 : screen.height * 0.61 );
+    healthBorder = Rect.fromLTWH(screen.height * 0.1, screen.height * 0.01, screen.height * 0.45, screen.height * 0.08);
+    health = Rect.fromLTWH(screen.height * 0.11, screen.height * 0.02, screen.height * 0.43, screen.height * 0.06);
     this.player = rightPlayer ? screen.gameLogic.rightPlayer : screen.gameLogic.leftPlayer;
     previousHealth = defaultHealth = player.getHealth();
-    defaultHealthLineLength = screen.h * 0.43;
+    defaultHealthLineLength = screen.height * 0.43;
     shield = TextComponent("", config: TextConfig(color: BasicPalette.white.color))
       ..anchor = Anchor.topLeft;
     healthText = TextComponent("", config: TextConfig(color: BasicPalette.white.color))
@@ -45,25 +45,25 @@ class PlayerBlock extends PositionComponent {
 
     if(rightPlayer) {
       healthText
-        ..x = screen.w - screen.h * 0.1 - screen.h * 0.25
-        ..y = screen.h * 0.02;
+        ..x = screen.width - screen.height * 0.1 - screen.height * 0.25
+        ..y = screen.height * 0.02;
       shield
-        ..x = screen.w - screen.h * 0.1 - screen.h * 0.58
-        ..y = screen.h * 0.02;
+        ..x = screen.width - screen.height * 0.1 - screen.height * 0.58
+        ..y = screen.height * 0.02;
     } else {
       healthText
-        ..x = screen.h * 0.29
-        ..y = screen.h * 0.02;
+        ..x = screen.height * 0.29
+        ..y = screen.height * 0.02;
       shield
-        ..x = screen.h * 0.6
-        ..y = screen.h * 0.02;
+        ..x = screen.height * 0.6
+        ..y = screen.height * 0.02;
     }
   }
 
   @override
   void render(Canvas canvas) {
     if(rightPlayer) {
-      canvas.translate(screen.w, 0);
+      canvas.translate(screen.width, 0);
       canvas.scale(-1.0, 1.0);
     }
     canvas.drawRect(healthBorder, black);
@@ -72,44 +72,44 @@ class PlayerBlock extends PositionComponent {
 
     for(int i = 0; i < player.initiative; i++) {
       canvas.drawRRect(RRect.fromRectAndRadius(
-          Rect.fromLTWH(screen.h * 0.5 - (i * screen.h * 0.06), screen.h * 0.1, screen.h * 0.03, screen.h * 0.03),
+          Rect.fromLTWH(screen.height * 0.5 - (i * screen.height * 0.06), screen.height * 0.1, screen.height * 0.03, screen.height * 0.03),
           Radius.circular(10)), Paint()..color = Colors.red);
     }
 
     if(rightPlayer) {
-      canvas.translate(screen.w, 0);
+      canvas.translate(screen.width, 0);
       canvas.scale(-1.0, 1.0);
     }
 
     if(rightPlayer) {
       healthText.text = player.getHealth().toString();
       healthText.render(canvas);
-      canvas.translate(-screen.w + screen.h * 0.1 + screen.h * 0.25, -screen.h * 0.02);
+      canvas.translate(-screen.width + screen.height * 0.1 + screen.height * 0.25, -screen.height * 0.02);
 
       shield.text = "+${player.getShield()}";
       shield.render(canvas);
-      canvas.translate(-screen.w + screen.h * 0.1 + screen.h * 0.58, -screen.h * 0.02);
+      canvas.translate(-screen.width + screen.height * 0.1 + screen.height * 0.58, -screen.height * 0.02);
     } else {
       healthText.text = player.getHealth().toString();
       healthText.render(canvas);
-      canvas.translate(-screen.h * 0.29, -screen.h * 0.02);
+      canvas.translate(-screen.height * 0.29, -screen.height * 0.02);
 
       shield.text = "+${player.getShield()}";
       shield.render(canvas);
-      canvas.translate(-screen.h * 0.6, -screen.h * 0.02);
+      canvas.translate(-screen.height * 0.6, -screen.height * 0.02);
     }
   }
 
   @override
   void update(double t) {
     if(previousHealth != player.getHealth()) {
-      health = Rect.fromLTWH(screen.h * 0.11, screen.h * 0.02, defaultHealthLineLength * (player.getHealth() / (defaultHealth / 100) / 100), screen.h * 0.06);
+      health = Rect.fromLTWH(screen.height * 0.11, screen.height * 0.02, defaultHealthLineLength * (player.getHealth() / (defaultHealth / 100) / 100), screen.height * 0.06);
       previousHealth = player.getHealth();
     }
 
-    if(rect.height > screen.h * 0.62) {
+    if(rect.height > screen.height * 0.62) {
       upBreath = false;
-    } else if (rect.height < screen.h * 0.6){
+    } else if (rect.height < screen.height * 0.6){
       upBreath = true;
     }
 

@@ -5,10 +5,10 @@ import 'package:flame/sprite.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mad_legend/models/collections.dart';
-import 'package:mad_legend/screen_bocks/cards_block.dart';
+import 'package:mad_legend/screen_blocks/cards_block.dart';
 import 'package:mad_legend/services/game_logic.dart';
 import 'package:mad_legend/main.dart';
-import 'package:mad_legend/screen_bocks/player_bock.dart';
+import 'package:mad_legend/screen_blocks/player_bock.dart';
 import 'package:mad_legend/store/player.dart';
 
 class GameScreen extends Screen{
@@ -31,15 +31,16 @@ class GameScreen extends Screen{
     bgPaint.color = Color.fromRGBO(69, 184, 179, 1);
   }
 
+  @override
   init() async {
     download = true;
     Player currentPlayer = await getPlayer();
 
     gameLogic = GameLogic(currentPlayer, Player("right", PlayerClass.DEFAULT), this);
     endTurnButton = Rect.fromLTWH(
-        w - h * 0.05 - w * 0.1,
-        h - h * 0.05 - h * 0.1,
-        w * 0.1, h * 0.1);
+        width - height * 0.05 - width * 0.1,
+        height - height * 0.05 - height * 0.1,
+        width * 0.1, height * 0.1);
 
     var imageLeft = await Flame.images.load("knight.png");
     var imageRight = await Flame.images.load("archer.png");
@@ -47,7 +48,7 @@ class GameScreen extends Screen{
     leftPlayerBlock = PlayerBlock(this, leftPlayerSprite, false);
     rightPlayerSprite = Sprite.fromImage(imageRight);
     rightPlayerBlock = PlayerBlock(this, rightPlayerSprite, true);
-    bottomBlock = BottomBlock(this, 0, h * 0.7, w, h * 0.3);
+    bottomBlock = BottomBlock(this, 0, height * 0.7, width, height * 0.3);
     download = false;
   }
 
@@ -107,12 +108,31 @@ class GameScreen extends Screen{
     }
   }
 
-  onStart(DragStartDetails details) {
+  @override
+  onVerticalStart(DragStartDetails details) {
     if(!download) {
       bottomBlock.onStart(details);
     }
   }
-  onEnd(DragEndDetails details) {
+
+  @override
+  onVerticalEnd(DragEndDetails details) {
+    if(!download) {
+      bottomBlock.onEnd(details);
+    }
+  }
+
+  onHorizontalUpdate(DragUpdateDetails details) {
+    if(!download) {
+      bottomBlock.onVerticalUpdate(details);
+    }
+  }
+  onHorizontalStart(DragStartDetails details) {
+    if(!download) {
+      bottomBlock.onStart(details);
+    }
+  }
+  onHorizontalEnd(DragEndDetails details) {
     if(!download) {
       bottomBlock.onEnd(details);
     }

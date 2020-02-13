@@ -23,4 +23,10 @@ flutter:
   assets:
     - assets/images/knight.png
     - assets/images/archer.png
-
+    - assets/images/trees_close_900.png
+    - assets/images/moon_765.png
+    - assets/images/tree_30_663.png
+    - assets/images/tree_663.png
+    - assets/images/trees_30_891.png
+    - assets/images/white_gradient.png
+    - assets/images/trees_50_471.png

@@ -1,41 +1,48 @@
 library screen.base;
-import 'package:flame/anchor.dart';
 import 'package:flame/components/component.dart';
-import 'package:flame/components/text_component.dart';
-import 'package:flame/flame.dart';
-import 'package:flame/palette.dart';
-import 'package:flame/sprite.dart';
-import 'package:flame/text_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mad_legend/models/collections.dart';
-import 'package:mad_legend/screen_bocks/cards_block.dart';
-import 'package:mad_legend/services/game_logic.dart';
 import 'package:mad_legend/main.dart';
-import 'package:mad_legend/screen_bocks/player_bock.dart';
 
 abstract class Screen extends Component {
-  var w,h;
+
+  double previousX, previousY;
+  var width,height;
   Rect bgRect;
   Paint bgPaint;
   MyGame game;
+
   Screen(this.game) {
-    w = game.size.width;
-    h = game.size.height;
-    bgRect = Rect.fromLTWH(0, 0, w, h);
-    bgPaint = Paint()..color = Colors.green;
+    width = game.size.width;
+    height = game.size.height;
+    bgRect = Rect.fromLTWH(0, 0, height * 4, height);
+    bgPaint = Paint()..color = Color(0xff222a5c);
   }
 
-  onVerticalUpdate(DragUpdateDetails details) {}
   onTapDown(TapDownDetails details) {}
   onTapUp(TapUpDetails details) {}
-  onStart(DragStartDetails details) {}
-  onEnd(DragEndDetails details) {}
+
+  onVerticalUpdate(DragUpdateDetails details) {}
+  onVerticalStart(DragStartDetails details) {}
+  onVerticalEnd(DragEndDetails details) {}
+
+  onHorizontalUpdate(DragUpdateDetails details) {}
+  onHorizontalStart(DragStartDetails details) {}
+  onHorizontalEnd(DragEndDetails details) {}
+
+  @override
+  void render(Canvas canvas) {
+    canvas.drawRect(bgRect, bgPaint);
+  }
+
+  init() {}
+  initResizable() {}
 
   @override
   void resize(Size size) {
     super.resize(size);
-    w = size.width;
-    h = size.height;
+    width = size.width;
+    height = size.height;
+    bgRect = Rect.fromLTWH(0, 0, height * 3, height);
   }
 }

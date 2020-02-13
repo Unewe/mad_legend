@@ -16,9 +16,15 @@ void main() async {
 
   VerticalDragGestureRecognizer verticalDrag = VerticalDragGestureRecognizer();
   verticalDrag.onUpdate = game.onVerticalUpdate;
-  verticalDrag.onStart = game.onStart;
-  verticalDrag.onEnd = game.onEnd;
+  verticalDrag.onStart = game.onVerticalStart;
+  verticalDrag.onEnd = game.onVerticalEnd;
   flameUtil.addGestureRecognizer(verticalDrag);
+
+  HorizontalDragGestureRecognizer horizontalDrag = HorizontalDragGestureRecognizer();
+  horizontalDrag.onUpdate = game.onHorizontalUpdate;
+  horizontalDrag.onStart = game.onHorizontalStart;
+  horizontalDrag.onEnd = game.onHorizontalEnd;
+  flameUtil.addGestureRecognizer(horizontalDrag);
 
   TapGestureRecognizer tapper = TapGestureRecognizer();
   tapper.onTapDown = game.onTapDown;
@@ -54,23 +60,35 @@ class MyGame extends Game {
     this.screen = screen;
   }
 
-  onVerticalUpdate(DragUpdateDetails details) {
-    screen.onVerticalUpdate(details);
-  }
-
   onTapDown(TapDownDetails details) {
-    screen.onTapDown(details);
+    if(screen != null) screen.onTapDown(details);
   }
 
   onTapUp(TapUpDetails details) {
-    screen.onTapUp(details);
+    if(screen != null) screen.onTapUp(details);
   }
 
-  onStart(DragStartDetails details) {
-    screen.onStart(details);
+  onVerticalUpdate(DragUpdateDetails details) {
+    if(screen != null) screen.onVerticalUpdate(details);
   }
 
-  onEnd(DragEndDetails details) {
-    screen.onEnd(details);
+  onVerticalStart(DragStartDetails details) {
+    if(screen != null) screen.onVerticalStart(details);
+  }
+
+  onVerticalEnd(DragEndDetails details) {
+    if(screen != null) screen.onVerticalEnd(details);
+  }
+
+  onHorizontalUpdate(DragUpdateDetails details) {
+    if(screen != null) screen.onHorizontalUpdate(details);
+  }
+
+  onHorizontalStart(DragStartDetails details) {
+    if(screen != null) screen.onHorizontalStart(details);
+  }
+
+  onHorizontalEnd(DragEndDetails details) {
+    if(screen != null) screen.onHorizontalEnd(details);
   }
 }
