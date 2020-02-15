@@ -12,7 +12,7 @@ class EndGameScreen extends Screen{
   Player player;
   TextComponent textComponent;
 
-  EndGameScreen(MyGame game, this.player, win) : super(game) {
+  EndGameScreen(FlameGame game, this.player, win) : super(game) {
     bgPaint = Paint()..color = Color.fromRGBO(56,0,44, 1);
     textComponent = TextComponent( win ? "Победа" : "Поражение", config: win ? TextConfig(
         color: Color.fromRGBO(70, 198, 87, 1),

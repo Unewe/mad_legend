@@ -18,13 +18,22 @@ Future<Player> getPlayer() async {
       break;
     }
   }
+
   Player player;
+
   if(playerName == null || playerClass == null) {
     player = Player("Default", PlayerClass.DEFAULT);
+    savePlayerName(player.name);
+    savePlayerClass(player.playerClass);
   } else {
     player = Player(playerName, playerClass);
   }
   return player;
+}
+
+Future<String> getPlayerName() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString(pName);
 }
 
 Future<bool> savePlayerName(String name) async {
@@ -34,5 +43,5 @@ Future<bool> savePlayerName(String name) async {
 
 Future<bool> savePlayerClass(PlayerClass playerClass) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  return await prefs.setString(pName, playerClass.toString());
+  return await prefs.setString(pClass, playerClass.toString());
 }

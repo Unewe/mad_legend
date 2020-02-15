@@ -20,20 +20,19 @@ class GameScreen extends Screen{
   Sprite rightPlayerSprite;
   SpriteComponent rightSpriteComponent;
 
-  bool download = true;
+  bool initiated = false;
 
   PlayerBlock leftPlayerBlock;
   PlayerBlock rightPlayerBlock;
   Rect endTurnButton;
+  int foregroundOpacity = 255;
 
-  GameScreen(MyGame game) : super(game) {
+  GameScreen(FlameGame game) : super(game) {
     init();
     bgPaint.color = Color.fromRGBO(69, 184, 179, 1);
   }
 
-  @override
   init() async {
-    download = true;
     Player currentPlayer = await getPlayer();
 
     gameLogic = GameLogic(currentPlayer, Player("right", PlayerClass.DEFAULT), this);
@@ -49,29 +48,30 @@ class GameScreen extends Screen{
     rightPlayerSprite = Sprite.fromImage(imageRight);
     rightPlayerBlock = PlayerBlock(this, rightPlayerSprite, true);
     bottomBlock = BottomBlock(this, 0, height * 0.7, width, height * 0.3);
-    download = false;
+    initiated = true;
   }
 
   @override
   void render(Canvas c) {
-    if(!download) {
+    if(initiated) {
       c.drawRect(bgRect, bgPaint);
       c.drawRect(endTurnButton, Paint()..color = Color.fromRGBO(189, 31, 63, 1));
       leftPlayerBlock.render(c);
       rightPlayerBlock.render(c);
       bottomBlock.render(c);
+      if(foregroundOpacity > 0) c.drawRect(bgRect, Paint()..color = Color.fromARGB(foregroundOpacity, 0, 0, 0));
     } else {
-      c.drawRect(bgRect, Paint()..color = Colors.pink);
+      c.drawRect(bgRect, Paint()..color = Colors.black);
     }
   }
 
   @override
   void update(double t) {
-    if(!download) {
+    if(initiated) {
       leftPlayerBlock.update(t);
       rightPlayerBlock.update(t);
-
       bottomBlock.update(t);
+      foregroundOpacity -= 3;
     }
   }
 
@@ -85,14 +85,14 @@ class GameScreen extends Screen{
 
   @override
   onTapUp(TapUpDetails details) {
-    if(!download) {
+    if(initiated) {
       bottomBlock.onTapUp(details);
     }
   }
 
   @override
   onTapDown(TapDownDetails details) {
-    if(!download) {
+    if(initiated) {
       bottomBlock.onTapDown(details);
 
       if(endTurnButton.contains(details.globalPosition)) {
@@ -103,37 +103,37 @@ class GameScreen extends Screen{
 
   @override
   onVerticalUpdate(DragUpdateDetails details) {
-    if(!download) {
+    if(initiated) {
       bottomBlock.onVerticalUpdate(details);
     }
   }
 
   @override
   onVerticalStart(DragStartDetails details) {
-    if(!download) {
+    if(initiated) {
       bottomBlock.onStart(details);
     }
   }
 
   @override
   onVerticalEnd(DragEndDetails details) {
-    if(!download) {
+    if(initiated) {
       bottomBlock.onEnd(details);
     }
   }
 
   onHorizontalUpdate(DragUpdateDetails details) {
-    if(!download) {
+    if(initiated) {
       bottomBlock.onVerticalUpdate(details);
     }
   }
   onHorizontalStart(DragStartDetails details) {
-    if(!download) {
+    if(initiated) {
       bottomBlock.onStart(details);
     }
   }
   onHorizontalEnd(DragEndDetails details) {
-    if(!download) {
+    if(initiated) {
       bottomBlock.onEnd(details);
     }
   }

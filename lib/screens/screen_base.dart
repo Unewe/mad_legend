@@ -1,5 +1,6 @@
 library screen.base;
 import 'package:flame/components/component.dart';
+import 'package:flame/flame.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mad_legend/main.dart';
@@ -10,7 +11,7 @@ abstract class Screen extends Component {
   var width,height;
   Rect bgRect;
   Paint bgPaint;
-  MyGame game;
+  FlameGame game;
 
   Screen(this.game) {
     width = game.size.width;
@@ -29,6 +30,8 @@ abstract class Screen extends Component {
   onHorizontalUpdate(DragUpdateDetails details) {}
   onHorizontalStart(DragStartDetails details) {}
   onHorizontalEnd(DragEndDetails details) {}
+
+  flutterWidgetAction() {}
 
   @override
   void render(Canvas canvas) {

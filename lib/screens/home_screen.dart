@@ -16,6 +16,7 @@ import 'package:flame/text_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mad_legend/main.dart';
+import 'package:mad_legend/store/player.dart';
 
 class HomeScreen extends Screen {
   Rect whiteGradientRect;
@@ -29,10 +30,11 @@ class HomeScreen extends Screen {
   TextComponent startText;
   TextComponent menu;
   bool menuOn = false;
+  bool nameEmpty = false;
 
-  TextComponent name;
+  TextComponent loot;
   TextComponent shop;
-  TextComponent bag;
+  TextComponent profile;
   TextComponent settings;
   List<TextComponent> menuList = List();
 
@@ -41,8 +43,7 @@ class HomeScreen extends Screen {
 
   List<SpriteComponent> components = List();
 
-
-  HomeScreen(MyGame game) : super(game) {
+  HomeScreen(FlameGame game) : super(game) {
     bgPaint = Paint()..color = Color(0xff2b248f);
 
     init();
@@ -64,38 +65,72 @@ class HomeScreen extends Screen {
 
     ///TextInitiation
     startText = TextComponent("START",
-        config: TextConfig(color: Colors.white, fontSize: 40, fontFamily: "YagiDouble"))
+        config: TextConfig(
+            color: Colors.white, fontSize: 40, fontFamily: "YagiDouble"))
       ..anchor = Anchor.bottomRight
       ..setByPosition(Position(width - 20, height - 20));
     menu = TextComponent("MENU",
-        config: TextConfig(color: Colors.white, fontSize: 40, fontFamily: "YagiDouble"))
+        config: TextConfig(
+            color: Colors.white, fontSize: 40, fontFamily: "YagiDouble"))
       ..anchor = Anchor.topLeft
       ..setByPosition(Position(20, 20));
 
-    name = TextComponent("NAME",
-        config: TextConfig(color: Colors.white, fontSize: 40, fontFamily: "YagiDouble"))
+    loot = TextComponent("LOOT",
+        config: TextConfig(
+            color: Colors.white, fontSize: 40, fontFamily: "YagiDouble"))
       ..anchor = Anchor.topRight
       ..setByPosition(Position(0, menu.toRect().bottom + 30));
-    shop = TextComponent("SHOP",
-        config: TextConfig(color: Colors.white, fontSize: 40, fontFamily: "YagiDouble"),)
+    shop = TextComponent(
+      "SHOP",
+      config: TextConfig(
+          color: Colors.white, fontSize: 40, fontFamily: "YagiDouble"),
+    )
       ..anchor = Anchor.topRight
-      ..setByPosition(Position(0, name.toRect().bottom + 10));
-    bag = TextComponent("BAG",
-        config: TextConfig(color: Colors.white, fontSize: 40, fontFamily: "YagiDouble"))
+      ..setByPosition(Position(0, loot.toRect().bottom + 10));
+    profile = TextComponent("PROFILE",
+        config: TextConfig(
+            color: Colors.white, fontSize: 40, fontFamily: "YagiDouble"))
       ..anchor = Anchor.topRight
       ..setByPosition(Position(0, shop.toRect().bottom + 10));
     settings = TextComponent("SETTINGS",
-        config: TextConfig(color: Colors.white, fontSize: 40, fontFamily: "YagiDouble"))
+        config: TextConfig(
+            color: Colors.white, fontSize: 40, fontFamily: "YagiDouble"))
       ..anchor = Anchor.topRight
-      ..setByPosition(Position(0, bag.toRect().bottom + 10));
+      ..setByPosition(Position(0, profile.toRect().bottom + 10));
 
-    menuList..add(name)..add(shop)..add(bag)..add(settings);
+    menuList..add(loot)..add(shop)..add(profile)..add(settings);
+
     ///next
     components.add(
         await CloseTrees.initComponentWithPosition(height, width, height * 4, 0)
           ..renderFlipX = true);
-    this.initiated = true;
+
+    ///PlayerNameAndClassSet
+    var player = await getPlayer();
+
+    if (player.name == "Default") {
+      nameEmpty = true;
+
+      ///Show name input
+//      this.game.forceCancelDropFocus = true;
+      this.game.showNameInput();
+
+      this.initiated = true;
+    } else {
+      this.initiated = true;
+      this.velocity = -4600;
+    }
+  }
+
+  nameSaved() {
+    this.game.clearAll();
+    nameEmpty = false;
     this.velocity = -4600;
+  }
+
+  @override
+  flutterWidgetAction() {
+    nameSaved();
   }
 
   @override
@@ -118,19 +153,20 @@ class HomeScreen extends Screen {
   }
 
   renderText(Canvas canvas) {
-    startText.render(canvas);
-    canvas.restore();
-    canvas.save();
-    menu.render(canvas);
-    canvas.restore();
-    canvas.save();
-
-    this.menuList.forEach((item) {
-      item.render(canvas);
+    if (!nameEmpty) {
+      startText.render(canvas);
       canvas.restore();
       canvas.save();
-    });
+      menu.render(canvas);
+      canvas.restore();
+      canvas.save();
 
+      this.menuList.forEach((item) {
+        item.render(canvas);
+        canvas.restore();
+        canvas.save();
+      });
+    }
   }
 
   @override
@@ -151,26 +187,19 @@ class HomeScreen extends Screen {
   }
 
   updateText(double t) {
-    ///TextOpacity for future
-//    if(textOpacity < 255) {
-//      this.textOpacity += 2;
-//      if(textOpacity > 255) textOpacity = 255;
-//      startText.config = TextConfig(color: Color.fromARGB(textOpacity, 57, 83, 192), fontSize: 40, fontFamily: "YagiDouble");
-//      menu.config = TextConfig(color: Color.fromARGB(textOpacity, 57, 83, 192), fontSize: 40, fontFamily: "YagiDouble");
-//    }
-
     this.menuList.forEach((item) {
       int index = menuList.indexOf(item);
 
-
-      if(this.menuOn && item.x - item.width < this.menu.x) {
-        if(index  == 0 || menuList.elementAt(index - 1).x > (this.menu.x + this.menu.width/2)) {
-          item.x += ((this.menu.x - (item.x - item.width))/5).floor() + 1;
+      if (this.menuOn && item.x - item.width < this.menu.x) {
+        if (index == 0 ||
+            menuList.elementAt(index - 1).x >
+                (this.menu.x + this.menu.width / 2)) {
+          item.x += ((this.menu.x - (item.x - item.width)) / 5).floor() + 1;
         }
       }
 
-      if(!this.menuOn && item.x > 0) {
-        item.x -= (item.x/5).floor() + 1;
+      if (!this.menuOn && item.x > 0) {
+        item.x -= (item.x / 5).floor() + 1;
       }
     });
   }
@@ -182,33 +211,42 @@ class HomeScreen extends Screen {
     } else {
       foregroundOpacity -= 2;
     }
-    if (foregroundOpacity > 255) foregroundOpacity = 255;
+    if (foregroundOpacity > 255) {
+      foregroundOpacity = 255;
+
+      var gameScreen = GameScreen(game);
+      game.toScreen(gameScreen);
+    }
     if (foregroundOpacity < 0) foregroundOpacity = 0;
     foregroundMask.color = Color.fromARGB(foregroundOpacity, 0, 0, 0);
   }
 
   @override
   void resize(Size size) {
-    print("Resize");
-    this.width = size.width;
-    this.height = size.height;
+    if (!menuOn) {
+      this.width = size.width;
+      this.height = size.height;
 
-    startScreenRect = Rect.fromLTWH(
-        startScreenRect.topLeft.dx, startScreenRect.topLeft.dy, size.width + 10, size.height);
+      startScreenRect = Rect.fromLTWH(startScreenRect.topLeft.dx,
+          startScreenRect.topLeft.dy, size.width + 10, size.height);
 
-    this.components.forEach((component) {
-      component.resize(size);
-    });
+      this.components.forEach((component) {
+        component.resize(size);
+      });
+    }
   }
 
   @override
   onTapDown(TapDownDetails details) {
+    super.onTapDown(details);
     this.velocity = 0;
     if (initiated) {
       if (startText.toRect().contains(details.globalPosition)) {
-        game.toScreen(GameScreen(game));
-      } else if(menu.toRect().contains(details.globalPosition)) {
+        this.velocity = -15000;
+      } else if (menu.toRect().contains(details.globalPosition)) {
         this.menuOn = !this.menuOn;
+      } else if (profile.toRect().contains(details.globalPosition)) {
+        savePlayerName("Default");
       }
     } else {}
   }
@@ -216,8 +254,10 @@ class HomeScreen extends Screen {
   @override
   onHorizontalUpdate(DragUpdateDetails details) {
     if (initiated &&
-        (startScreenRect.topLeft.dx + (details.globalPosition.dx - previousX) < 0) &&
-        (startScreenRect.topLeft.dx + (details.globalPosition.dx - previousX) > -height * 6)) {
+        (startScreenRect.topLeft.dx + (details.globalPosition.dx - previousX) <
+            0) &&
+        (startScreenRect.topLeft.dx + (details.globalPosition.dx - previousX) >
+            -height * 6)) {
       startScreenRect =
           startScreenRect.translate(details.globalPosition.dx - previousX, 0);
       components.forEach((component) {
@@ -243,6 +283,7 @@ class HomeScreen extends Screen {
 
   @override
   onHorizontalEnd(DragEndDetails details) {
+    super.onHorizontalEnd(details);
     this.velocity = details.velocity.pixelsPerSecond.dx;
   }
 }
