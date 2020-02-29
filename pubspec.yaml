@@ -39,3 +39,12 @@ flutter:
     - assets/images/trees_30_891.png
     - assets/images/white_gradient.png
     - assets/images/trees_50_471.png
+    - assets/images/game_bg_trees.png
+    - assets/images/arrow_default.png
+    - assets/images/sword_default.png
+    - assets/images/shield_default.png
+    - assets/images/curse_default.png
+    - assets/images/improvement_default.png
+    - assets/images/prepare_default.png
+    - assets/images/card_shadow.png
+    - assets/images/garbage_default.png

@@ -1,3 +1,4 @@
+import 'package:flame/sprite.dart';
 import 'package:mad_legend/services/game_logic.dart';
 
 class Cards {
@@ -9,6 +10,49 @@ class Cards {
   Features feature;
   Cost costType;
   int costCount;
+  Sprite img;
+
+  String getShortDescription(Player player) {
+    switch (feature) {
+      case Features.meleeDefault:
+        double dmgLowTmp = this.dmgLow.toDouble();
+        double dmgHighTmp = this.dmgHigh.toDouble();
+        if(player.getImprovements().isNotEmpty) {
+          for(Cards improvement in player.getImprovements()) {
+            dmgHighTmp +=  dmgHighTmp * improvement.chance;
+            dmgLowTmp += dmgLowTmp * improvement.chance;
+          }
+        }
+        return "${(dmgLowTmp).floor()}-${(dmgHighTmp).floor()}";
+      case Features.rangedDefault:
+        double dmgLowTmp = this.dmgLow.toDouble();
+        if(player.getImprovements().isNotEmpty) {
+          for(Cards improvement in player.getImprovements()) {
+            dmgLowTmp += dmgLowTmp * improvement.chance;
+          }
+        }
+        return "${(this.chance * 100).floor()}% ${(dmgLowTmp).floor()}";
+      case Features.shieldDefault:
+        double dmgLowTmp = this.dmgLow.toDouble();
+        if(player.getImprovements().isNotEmpty) {
+          for(Cards improvement in player.getImprovements()) {
+            dmgLowTmp += dmgLowTmp * improvement.chance;
+          }
+        }
+        return "+${(dmgLowTmp).floor()}";
+      case Features.prepareDefault:
+        return "+1И+1К";
+      case Features.curseDefault:
+        return "2К";
+      case Features.simpleCurse:
+        return "0";
+      case Features.improvementDefault:
+        return "+${(this.chance * 100).floor()}%";
+      case Features.lastBreathDefault:
+        return "${this.dmgHigh}*КП";
+    }
+    return "Рок это круто!!!";
+  }
 
   String getDescription(Player player) {
     switch (feature) {
@@ -43,7 +87,7 @@ class Cards {
       case Features.curseDefault:
         return "Добавляет 2 карты проклятия в колоду противника.";
       case Features.simpleCurse:
-        return "Жалкое проклятие. Просто выбросите и играйте дальше";
+        return "Ненужный хлам. Просто выбросите и играйте дальше";
       case Features.improvementDefault:
         return "Ваша следующая атака улучшена на ${(this.chance * 100).floor()}%";
       case Features.lastBreathDefault:
@@ -53,7 +97,7 @@ class Cards {
   }
 
   Cards(this.id, this.name, this.chance, this.dmgLow,
-      this.dmgHigh, this.feature, this.costType, this.costCount);
+      this.dmgHigh, this.feature, this.costType, this.costCount, this.img);
 
   static List<Cards> getDefaultCollection() {
     return List.of([
@@ -66,35 +110,35 @@ class Cards {
   }
 
   static Cards defaultMeleeCard() {
-    return Cards(1, "Удар", 1, 2, 12, Features.meleeDefault, Cost.initiative, 1);
+    return Cards(1, "Удар", 1, 2, 12, Features.meleeDefault, Cost.initiative, 2, Sprite('sword_default.png'));
   }
 
   static Cards defaultRangedCard() {
-    return Cards(2, "Выстрел", 0.7, 10, 10, Features.rangedDefault, Cost.initiative, 1);
+    return Cards(2, "Выстрел", 0.7, 10, 10, Features.rangedDefault, Cost.initiative, 2,  Sprite('arrow_default.png'));
   }
 
   static Cards defaultShieldCard() {
-    return Cards(3, "Щит", 1, 8, 8, Features.shieldDefault, Cost.initiative, 1);
+    return Cards(3, "Щит", 1, 5, 5, Features.shieldDefault, Cost.initiative, 1,  Sprite('shield_default.png'));
   }
 
   static Cards defaultPrepareCard() {
-    return Cards(4, "Подготовка", 1, 1, 1, Features.prepareDefault, Cost.noCost, 0);
+    return Cards(4, "Подготовка", 1, 1, 1, Features.prepareDefault, Cost.noCost, 0,  Sprite('prepare_default.png'));
   }
 
   static Cards defaultCurseCard() {
-    return Cards(5, "Проклятие", 1, 1, 1, Features.curseDefault, Cost.health, 3);
+    return Cards(5, "Проклятие", 1, 2, 2, Features.curseDefault, Cost.noCost, 0,  Sprite('curse_default.png'));
   }
 
   static Cards simpleCurse() {
-    return Cards(5, "Простое проклятие", 1, 1, 1, Features.simpleCurse, Cost.noCost, 0);
+    return Cards(5, "Простой мусор", 1, 1, 1, Features.simpleCurse, Cost.noCost, 0,  Sprite('garbage_default.png'));
   }
 
   static Cards defaultImprovementCard() {
-    return Cards(6, "Улучшение", 0.5, 1, 1, Features.improvementDefault, Cost.health, 3);
+    return Cards(6, "Улучшение", 0.5, 1, 1, Features.improvementDefault, Cost.initiative, 1,  Sprite('improvement_default.png'));
   }
 
   static Cards defaultLastBreathCard() {
-    return Cards(7, "Последний вздох", 1, 2, 2, Features.improvementDefault, Cost.noCost, 0);
+    return Cards(7, "Последний вздох", 1, 2, 2, Features.improvementDefault, Cost.noCost, 0,  Sprite('improvement_default.png'));
   }
 
   @override

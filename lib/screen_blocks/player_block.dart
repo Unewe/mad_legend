@@ -32,7 +32,7 @@ class PlayerBlock extends PositionComponent {
   int previousHealth, defaultHealth;
 
   PlayerBlock(this.screen, this.sprite, this.rightPlayer) {
-    rect = Rect.fromLTWH(screen.height * 0.1, screen.height * 0.1, screen.height * 0.45, rightPlayer ? screen.height * 0.6 : screen.height * 0.61 );
+    rect = Rect.fromLTWH(0, 0, screen.height * 0.72, rightPlayer ? screen.height * 0.7 : screen.height * 0.71);
     healthBorder = Rect.fromLTWH(screen.height * 0.1, screen.height * 0.01, screen.height * 0.45, screen.height * 0.08);
     health = Rect.fromLTWH(screen.height * 0.11, screen.height * 0.02, screen.height * 0.43, screen.height * 0.06);
     this.player = rightPlayer ? screen.gameLogic.rightPlayer : screen.gameLogic.leftPlayer;
@@ -107,9 +107,9 @@ class PlayerBlock extends PositionComponent {
       previousHealth = player.getHealth();
     }
 
-    if(rect.height > screen.height * 0.62) {
+    if(rect.height > screen.height * 0.72) {
       upBreath = false;
-    } else if (rect.height < screen.height * 0.6){
+    } else if (rect.height < screen.height * 0.7){
       upBreath = true;
     }
 

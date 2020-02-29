@@ -22,11 +22,11 @@ class GameLogic {
     if (r == 0) {
       current = leftPlayer;
       opponent = rightPlayer;
-      current.initiative = 1;
+      current.initiative = current.firstTurnInitiative;
     } else {
       current = rightPlayer;
       opponent = leftPlayer;
-      current.initiative = 1;
+      current.initiative = current.firstTurnInitiative;
     }
   }
 
@@ -84,33 +84,30 @@ class GameLogic {
           this.gameScreen.bottomBlock.currentCards.replaceRange(
               0, 1, List.of([current.currentTurnCards.elementAt(rndIndex)]));
           this.current.currentTurnCards.removeAt(rndIndex);
-          this.gameScreen.bottomBlock.initCards(0);
         } else if (this.gameScreen.bottomBlock.secondRect == null) {
           this.gameScreen.bottomBlock.secondRect =
               this.gameScreen.bottomBlock.secondRectBg;
           this.gameScreen.bottomBlock.currentCards.replaceRange(
               1, 2, List.of([current.currentTurnCards.elementAt(rndIndex)]));
           this.current.currentTurnCards.removeAt(rndIndex);
-          this.gameScreen.bottomBlock.initCards(1);
         } else if (this.gameScreen.bottomBlock.thirdRect == null) {
           this.gameScreen.bottomBlock.thirdRect =
               this.gameScreen.bottomBlock.thirdRectBg;
           this.gameScreen.bottomBlock.currentCards.replaceRange(
               2, 3, List.of([current.currentTurnCards.elementAt(rndIndex)]));
           this.current.currentTurnCards.removeAt(rndIndex);
-          this.gameScreen.bottomBlock.initCards(2);
         } else if (this.gameScreen.bottomBlock.fourthRect == null) {
           this.gameScreen.bottomBlock.fourthRect =
               this.gameScreen.bottomBlock.fourthRectBg;
           this.gameScreen.bottomBlock.currentCards.replaceRange(
               3, 4, List.of([current.currentTurnCards.elementAt(rndIndex)]));
           this.current.currentTurnCards.removeAt(rndIndex);
-          this.gameScreen.bottomBlock.initCards(3);
         }
         break;
       case Features.curseDefault:
-        opponent.cards.add(Cards.simpleCurse());
-        opponent.cards.add(Cards.simpleCurse());
+        for(int i = 0; i < Cards.defaultCurseCard().dmgHigh; i++) {
+          opponent.cards.add(Cards.simpleCurse());
+        }
         break;
       case Features.simpleCurse:
         current.cards.removeAt(current.cards.indexOf(card));
@@ -129,8 +126,6 @@ class GameLogic {
         break;
     }
 
-    this.gameScreen.bottomBlock.initAllCardsText();
-
     if (leftPlayer.getHealth() <= 0 && rightPlayer.getHealth() <= 0) {
       draw();
     } else if (leftPlayer.getHealth() <= 0) {
@@ -147,7 +142,7 @@ class GameLogic {
     current.currentTurnCards = List.of(current.cards);
     opponent.currentTurnCards = List.of(opponent.cards);
 
-    current.initiative = 2;
+    current.initiative = current.defaultInitiative;
 
     if (current == rightPlayer) {
       cpuTurn();
@@ -237,6 +232,7 @@ class Player {
   List<Cards> _degradations = List();
   int firstTurnInitiative;
   int initiative;
+  int defaultInitiative;
 
   List<Cards> cards;
   List<Cards> currentTurnCards;
@@ -245,9 +241,9 @@ class Player {
   Player(this.name, this.playerClass) {
     switch (playerClass) {
       case PlayerClass.DEFAULT:
-        this._health = 50;
+        this._health = 30;
         this.firstTurnInitiative = 1;
-        this.initiative = 2;
+        this.initiative = defaultInitiative = 3;
         this._shield = 0;
         this.cards = Cards.getDefaultCollection();
         this.currentTurnCards = Cards.getDefaultCollection();
@@ -256,7 +252,7 @@ class Player {
       case PlayerClass.KNIGHT:
         this._health = 70;
         this.firstTurnInitiative = 1;
-        this.initiative = 2;
+        this.initiative = defaultInitiative = 3;
         this._shield = 0;
         this.cards = Cards.getDefaultCollection();
         this.currentTurnCards = Cards.getDefaultCollection();
@@ -265,7 +261,7 @@ class Player {
       case PlayerClass.ARCHER:
         this._health = 60;
         this.firstTurnInitiative = 1;
-        this.initiative = 2;
+        this.initiative = defaultInitiative = 3;
         this._shield = 0;
         this.cards = Cards.getDefaultCollection();
         this.currentTurnCards = Cards.getDefaultCollection();
