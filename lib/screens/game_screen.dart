@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mad_legend/models/collections.dart';
 import 'package:mad_legend/screen_blocks/cards_block.dart';
+import 'package:mad_legend/services/game_context.dart';
 import 'package:mad_legend/services/game_logic.dart';
 import 'package:mad_legend/main.dart';
 import 'package:mad_legend/screen_blocks/player_block.dart';
@@ -32,6 +33,7 @@ class GameScreen extends Screen {
   int foregroundOpacity = 255;
 
   GameScreen(FlameGame game) : super(game) {
+    GameContext.gameScreen = this;
     init();
     bgPaint.color = Color.fromRGBO(69, 184, 179, 1);
   }

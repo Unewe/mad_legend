@@ -2,7 +2,6 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flame/anchor.dart';
 import 'package:flame/components/component.dart';
-import 'package:flame/components/text_box_component.dart';
 import 'package:flame/components/text_component.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/text_config.dart';
@@ -10,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mad_legend/models/collections.dart';
 import 'package:mad_legend/screens/game_screen.dart';
+import 'package:mad_legend/services/game_context.dart';
 
 class BottomBlock extends Component {
   Random random = Random();
@@ -36,12 +36,13 @@ class BottomBlock extends Component {
   var dragYPosition;
   bool isGameJustStarted = true;
 
-  CardTextBox firstTextBox, secondTextBox, thirdTextBox, fourthTextBox;
-
   Paint paint = Paint()..color = Color.fromRGBO(102, 59, 147, 1);
   Paint paintBg = Paint()..color = Colors.black26;
 
+  List<CardItem> opponentCards = List();
+
   BottomBlock(this.gameScreen, this.x, this.y, this.w, this.h) {
+    GameContext.cardsBlock = this;
     firstY = secondY = thirdY = fourthY = y;
 
     width = h * 0.7;
@@ -59,7 +60,8 @@ class BottomBlock extends Component {
     cardBg = Sprite('card_shadow.png');
     initCardsFully();
 
-    opponentCard = opponentCardStartPosition = Rect.fromLTWH(w/2 - width/2, -10, width, h * 0.95);
+    opponentCard = opponentCardStartPosition =
+        Rect.fromLTWH(w / 2 - width / 2, -h * 0.95, width, h * 0.95);
   }
 
   initCardsFully() {
@@ -71,188 +73,32 @@ class BottomBlock extends Component {
   }
 
   @override
-  void render(Canvas c) async {
-    cardBg.renderRect(c, firstRectBg);
-    cardBg.renderRect(c, secondRectBg);
-    cardBg.renderRect(c, thirdRectBg);
-    cardBg.renderRect(c, fourthRectBg);
+  void render(Canvas canvas) async {
+    cardBg.renderRect(canvas, firstRectBg);
+    cardBg.renderRect(canvas, secondRectBg);
+    cardBg.renderRect(canvas, thirdRectBg);
+    cardBg.renderRect(canvas, fourthRectBg);
 
     if (!isGameJustStarted &&
         this.gameScreen.gameLogic.leftPlayer ==
             this.gameScreen.gameLogic.current) {
       if (firstRect != null) {
-        currentCards.elementAt(0).img.renderRect(c, firstRect);
-        ///Dmg
-        TextComponent(
-            currentCards
-                .elementAt(0)
-                .getShortDescription(this.gameScreen.gameLogic.leftPlayer),
-            config: TextConfig(
-                color: Colors.black, fontSize: 10, textAlign: TextAlign.right))
-          ..anchor = Anchor.topRight
-          ..x = firstRect.topRight.dx - 5
-          ..y = firstRect.topRight.dy + 5
-          ..render(c);
-        c..restore()
-          ..save();
-        ///Cost
-        TextComponent(
-            currentCards
-                .elementAt(0)
-                .costCount.toString(),
-            config: TextConfig(
-                color: Colors.black, fontSize: 10, textAlign: TextAlign.right))
-          ..anchor = Anchor.topLeft
-          ..x = firstRect.topLeft.dx + 5
-          ..y = firstRect.topLeft.dy + 5
-          ..render(c);
-        c..restore()
-          ..save();
-
-        ///Name
-        TextComponent(
-            currentCards
-                .elementAt(0)
-                .name,
-            config: TextConfig(
-                color: Colors.black, fontSize: 10, textAlign: TextAlign.center))
-          ..anchor = Anchor.bottomCenter
-          ..x = firstRect.bottomCenter.dx
-          ..y = firstRect.bottomCenter.dy - 5
-          ..render(c);
-        c..restore()
-          ..save();
+        CardItem(currentCards.elementAt(0), firstRect)..render(canvas);
       }
       if (secondRect != null) {
-        currentCards.elementAt(1).img.renderRect(c, secondRect);
-        TextComponent(
-            currentCards
-                .elementAt(1)
-                .getShortDescription(this.gameScreen.gameLogic.leftPlayer),
-            config: TextConfig(
-                color: Colors.black, fontSize: 10, textAlign: TextAlign.right))
-          ..anchor = Anchor.topRight
-          ..x = secondRect.topRight.dx - 5
-          ..y = secondRect.topRight.dy + 5
-          ..render(c);
-        c..restore()
-          ..save();
-
-        ///Cost
-        TextComponent(
-            currentCards
-                .elementAt(1)
-                .costCount.toString(),
-            config: TextConfig(
-                color: Colors.black, fontSize: 10, textAlign: TextAlign.right))
-          ..anchor = Anchor.topLeft
-          ..x = secondRect.topLeft.dx + 5
-          ..y = secondRect.topLeft.dy + 5
-          ..render(c);
-        c..restore()
-          ..save();
-
-        ///Name
-        TextComponent(
-            currentCards
-                .elementAt(1)
-                .name,
-            config: TextConfig(
-                color: Colors.black, fontSize: 10, textAlign: TextAlign.center))
-          ..anchor = Anchor.bottomCenter
-          ..x = secondRect.bottomCenter.dx
-          ..y = secondRect.bottomCenter.dy - 5
-          ..render(c);
-        c..restore()
-          ..save();
+        CardItem(currentCards.elementAt(1), secondRect)..render(canvas);
       }
       if (thirdRect != null) {
-        currentCards.elementAt(2).img.renderRect(c, thirdRect);
-        TextComponent(
-            currentCards
-                .elementAt(2)
-                .getShortDescription(this.gameScreen.gameLogic.leftPlayer),
-            config: TextConfig(
-                color: Colors.black, fontSize: 10, textAlign: TextAlign.right))
-          ..anchor = Anchor.topRight
-          ..x = thirdRect.topRight.dx - 5
-          ..y = thirdRect.topRight.dy + 5
-          ..render(c);
-        c..restore()
-          ..save();
-
-        ///Cost
-        TextComponent(
-            currentCards
-                .elementAt(2)
-                .costCount.toString(),
-            config: TextConfig(
-                color: Colors.black, fontSize: 10, textAlign: TextAlign.right))
-          ..anchor = Anchor.topLeft
-          ..x = thirdRect.topLeft.dx + 5
-          ..y = thirdRect.topLeft.dy + 5
-          ..render(c);
-        c..restore()
-          ..save();
-
-        ///Name
-        TextComponent(
-            currentCards
-                .elementAt(2)
-                .name,
-            config: TextConfig(
-                color: Colors.black, fontSize: 10, textAlign: TextAlign.center))
-          ..anchor = Anchor.bottomCenter
-          ..x = thirdRect.bottomCenter.dx
-          ..y = thirdRect.bottomCenter.dy - 5
-          ..render(c);
-        c..restore()
-          ..save();
+        CardItem(currentCards.elementAt(2), thirdRect)..render(canvas);
       }
-
       if (fourthRect != null) {
-        currentCards.elementAt(3).img.renderRect(c, fourthRect);
-        TextComponent(
-            currentCards
-                .elementAt(3)
-                .getShortDescription(this.gameScreen.gameLogic.leftPlayer),
-            config: TextConfig(
-                color: Colors.black, fontSize: 10, textAlign: TextAlign.right))
-          ..anchor = Anchor.topRight
-          ..x = fourthRect.topRight.dx - 5
-          ..y = fourthRect.topRight.dy + 5
-          ..render(c);
-        c..restore()
-          ..save();
-
-        ///Cost
-        TextComponent(
-            currentCards
-                .elementAt(3)
-                .costCount.toString(),
-            config: TextConfig(
-                color: Colors.black, fontSize: 10, textAlign: TextAlign.right))
-          ..anchor = Anchor.topLeft
-          ..x = fourthRect.topLeft.dx + 5
-          ..y = fourthRect.topLeft.dy + 5
-          ..render(c);
-        c..restore()
-          ..save();
-
-        ///Name
-        TextComponent(
-            currentCards
-                .elementAt(3)
-                .name,
-            config: TextConfig(
-                color: Colors.black, fontSize: 10, textAlign: TextAlign.center))
-          ..anchor = Anchor.bottomCenter
-          ..x = fourthRect.bottomCenter.dx
-          ..y = fourthRect.bottomCenter.dy - 5
-          ..render(c);
-        c..restore()
-          ..save();
+        CardItem(currentCards.elementAt(3), fourthRect)..render(canvas);
       }
+    }
+
+    ///RenderOpponentCard
+    if (this.opponentCards.length > 0) {
+      opponentCards.forEach((card) => card..render(canvas));
     }
   }
 
@@ -261,11 +107,22 @@ class BottomBlock extends Component {
     if (isGameJustStarted &&
         this.gameScreen.gameLogic.rightPlayer ==
             this.gameScreen.gameLogic.current) {
-      this.gameScreen.gameLogic.cpuTurn();
+      this.gameScreen.gameLogic.cpuTurn(noDelay: false);
       this.isGameJustStarted = false;
     }
     if (this.isGameJustStarted) {
       this.isGameJustStarted = false;
+    }
+
+    if (this.opponentCards.length > 0) {
+      for (int i = 0; i < opponentCards.length; i++) {
+        if (i == 0 || opponentCards[i - 1].speed <= 0.5)
+          opponentCards[i].update();
+
+        if (opponentCards[i].speed <= 0.1) {
+          opponentCards.removeAt(i);
+        }
+      }
     }
   }
 
@@ -393,51 +250,121 @@ class BottomBlock extends Component {
     }
     return list;
   }
-}
 
-class PlayerView extends PositionComponent {
-  @override
-  void render(Canvas c) {
-    // TODO: implement render
-  }
-
-  @override
-  void update(double t) {
-    // TODO: implement update
+  startOpponentAnimation() {
+    this.opponentAnimation = true;
   }
 }
 
+///CardItem ********************************************************************
 class CardItem {
   Paint paint = Paint()..color = Color.fromRGBO(34, 42, 92, 1);
   Paint paintBg = Paint()..color = Colors.black26;
-  Rect bgRect;
   Rect cardRect;
+  Cards card;
+  bool isOpponent;
+  double angle = 0;
+  double rotation = (Random().nextDouble() - 0.45) / 100;
+  double speed = 20;
+  int actualDmg = 0;
 
-  CardItem(Rect rect) {
-    bgRect = cardRect = rect;
-  }
+  CardItem(this.card, this.cardRect, {this.isOpponent = false});
 
   render(Canvas canvas) {
-    canvas.drawRRect(
-        RRect.fromRectAndRadius(bgRect, Radius.circular(10)), paintBg);
-    canvas.drawRRect(
-        RRect.fromRectAndRadius(cardRect, Radius.circular(10)), paint);
+    if (!isOpponent) {
+      ///Img
+      card.img.renderRect(canvas, cardRect);
+
+      ///Dmg
+      TextComponent(card.getShortDescription(GameContext.gameLogic.current),
+          config: TextConfig(
+              color: Colors.black, fontSize: 10, textAlign: TextAlign.right))
+        ..anchor = Anchor.topRight
+        ..x = cardRect.topRight.dx - 5
+        ..y = cardRect.topRight.dy + 5
+        ..render(canvas);
+      canvas
+        ..restore()
+        ..save();
+
+      ///Cost
+      TextComponent(card.costCount.toString(),
+          config: TextConfig(
+              color: Colors.black, fontSize: 10, textAlign: TextAlign.right))
+        ..anchor = Anchor.topLeft
+        ..x = cardRect.topLeft.dx + 5
+        ..y = cardRect.topLeft.dy + 5
+        ..render(canvas);
+      canvas
+        ..restore()
+        ..save();
+
+      ///Name
+      TextComponent(card.name,
+          config: TextConfig(
+              color: Colors.black, fontSize: 10, textAlign: TextAlign.center))
+        ..anchor = Anchor.bottomCenter
+        ..x = cardRect.bottomCenter.dx
+        ..y = cardRect.bottomCenter.dy - 5
+        ..render(canvas);
+      canvas
+        ..restore()
+        ..save();
+    } else {
+      ///Opponents cards animation !!!
+      Rect opponentR = Rect.fromLTWH(-cardRect.width / 2, -cardRect.height / 2,
+          cardRect.width, cardRect.height);
+      canvas.translate(cardRect.center.dx, cardRect.center.dy);
+      canvas.rotate(angle);
+
+      ///Img
+      card.img.renderRect(canvas, opponentR);
+
+      ///Dmg
+      TextComponent(card.getShortDescription(GameContext.gameLogic.current),
+          config: TextConfig(
+              color: Colors.black, fontSize: 10, textAlign: TextAlign.right))
+        ..anchor = Anchor.topRight
+        ..x = opponentR.topRight.dx - 5
+        ..y = opponentR.topRight.dy + 5
+        ..render(canvas);
+      canvas
+        ..restore()
+        ..save();
+      canvas.translate(cardRect.center.dx, cardRect.center.dy);
+      canvas.rotate(angle);
+
+      ///Cost
+      TextComponent(card.costCount.toString(),
+          config: TextConfig(
+              color: Colors.black, fontSize: 10, textAlign: TextAlign.right))
+        ..anchor = Anchor.topLeft
+        ..x = opponentR.topLeft.dx + 5
+        ..y = opponentR.topLeft.dy + 5
+        ..render(canvas);
+      canvas
+        ..restore()
+        ..save();
+      canvas.translate(cardRect.center.dx, cardRect.center.dy);
+      canvas.rotate(angle);
+
+      ///Name
+      TextComponent(card.name,
+          config: TextConfig(
+              color: Colors.black, fontSize: 10, textAlign: TextAlign.center))
+        ..anchor = Anchor.bottomCenter
+        ..x = opponentR.bottomCenter.dx
+        ..y = opponentR.bottomCenter.dy - 5
+        ..render(canvas);
+      canvas
+        ..restore()
+        ..save();
+    }
   }
-}
 
-class CardTextBox extends TextBoxComponent {
-  Rect rect;
-
-  CardTextBox(String text, this.rect)
-      : super(text,
-            config: TextConfig(
-                fontSize: 10.0,
-                fontFamily: 'Awesome Font',
-                color: Colors.white),
-            boxConfig: TextBoxConfig(maxWidth: rect.width, margin: 10));
-
-  @override
-  void drawBackground(Canvas c) {
-    c.drawRect(rect, Paint()..color = Colors.transparent);
+  update() {
+    this.cardRect = this.cardRect.translate(0, speed);
+    angle += rotation;
+    if (speed >= 0.1) speed -= speed * 0.085;
   }
 }

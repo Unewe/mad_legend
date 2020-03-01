@@ -1,7 +1,9 @@
 import 'dart:math';
 import 'package:mad_legend/models/collections.dart';
+import 'package:mad_legend/screen_blocks/cards_block.dart';
 import 'package:mad_legend/screens/end_game_screen.dart';
 import 'package:mad_legend/screens/game_screen.dart';
+import 'package:mad_legend/services/game_context.dart';
 
 class GameLogic {
   GameScreen gameScreen;
@@ -14,6 +16,7 @@ class GameLogic {
   Player opponent;
 
   GameLogic(this.leftPlayer, this.rightPlayer, this.gameScreen) {
+    GameContext.gameLogic = this;
     leftPlayer.setGameLogic(this);
     rightPlayer.setGameLogic(this);
 
@@ -66,11 +69,11 @@ class GameLogic {
         opponent.hit(dmg);
         break;
       case Features.shieldDefault:
-        if (current.getImprovements().length > 0) {
-          current.getImprovements().forEach(
-              (improvement) => dmg += (dmg * improvement.chance).round());
-        }
-        current._improvements.clear();
+//        if (current.getImprovements().length > 0) {
+//          current.getImprovements().forEach(
+//              (improvement) => dmg += (dmg * improvement.chance).round());
+//        }
+//        current._improvements.clear();
         current.shieldUp(dmg);
         break;
       case Features.prepareDefault:
@@ -105,7 +108,7 @@ class GameLogic {
         }
         break;
       case Features.curseDefault:
-        for(int i = 0; i < Cards.defaultCurseCard().dmgHigh; i++) {
+        for (int i = 0; i < Cards.defaultCurseCard().dmgHigh; i++) {
           opponent.cards.add(Cards.simpleCurse());
         }
         break;
@@ -153,7 +156,8 @@ class GameLogic {
 
   lastWord(Player player) {}
 
-  endGame(Player player) {
+  endGame(Player player) async {
+    await Future.delayed(Duration(seconds: 3), () => {});
     gameScreen.game.toScreen(
         EndGameScreen(this.gameScreen.game, leftPlayer, leftPlayer != player));
   }
@@ -166,10 +170,13 @@ class GameLogic {
     return current.cards;
   }
 
-  cpuTurn() {
+  cpuTurn({bool noDelay = true}) async {
     List<Cards> cpuHand = List();
+    int duration = 1;
 
-    for (int i = 0; i < 5; i++) {
+    bool isFirstCard = noDelay;
+
+    for (int i = 0; i < 4; i++) {
       int value = random.nextInt(current.currentTurnCards.length);
       cpuHand.add(current.currentTurnCards.elementAt(value));
       current.currentTurnCards.removeAt(value);
@@ -178,27 +185,63 @@ class GameLogic {
     for (int i = 0; i <= 5; i++) {
       if (cpuHand.contains(Cards.simpleCurse()) &&
           _isEnough(Cards.simpleCurse())) {
+        if (!isFirstCard)
+          await Future.delayed(Duration(seconds: duration), () => {});
+        GameContext.cardsBlock.opponentCards.add(CardItem(
+            Cards.simpleCurse(), GameContext.cardsBlock.opponentCard,
+            isOpponent: true));
         dropCard(cpuHand.removeAt(cpuHand.indexOf(Cards.simpleCurse())));
-      } else if (cpuHand.contains(Cards.defaultImprovementCard()) &&
-          _isEnough(Cards.defaultImprovementCard())) {
-        dropCard(
-            cpuHand.removeAt(cpuHand.indexOf(Cards.defaultImprovementCard())));
       } else if (cpuHand.contains(Cards.defaultPrepareCard()) &&
           _isEnough(Cards.defaultPrepareCard())) {
+        if (!isFirstCard)
+          await Future.delayed(Duration(seconds: duration), () => {});
+        GameContext.cardsBlock.opponentCards.add(CardItem(
+            Cards.defaultPrepareCard(), GameContext.cardsBlock.opponentCard,
+            isOpponent: true));
         dropCard(cpuHand.removeAt(cpuHand.indexOf(Cards.defaultPrepareCard())));
+      } else if (cpuHand.contains(Cards.defaultImprovementCard()) &&
+          _isEnough(Cards.defaultImprovementCard())) {
+        if (!isFirstCard)
+          await Future.delayed(Duration(seconds: duration), () => {});
+        GameContext.cardsBlock.opponentCards.add(CardItem(
+            Cards.defaultImprovementCard(), GameContext.cardsBlock.opponentCard,
+            isOpponent: true));
+        dropCard(
+            cpuHand.removeAt(cpuHand.indexOf(Cards.defaultImprovementCard())));
       } else if (cpuHand.contains(Cards.defaultMeleeCard()) &&
           _isEnough(Cards.defaultMeleeCard())) {
+        if (!isFirstCard)
+          await Future.delayed(Duration(seconds: duration), () => {});
+        GameContext.cardsBlock.opponentCards.add(CardItem(
+            Cards.defaultMeleeCard(), GameContext.cardsBlock.opponentCard,
+            isOpponent: true));
         dropCard(cpuHand.removeAt(cpuHand.indexOf(Cards.defaultMeleeCard())));
       } else if (cpuHand.contains(Cards.defaultRangedCard()) &&
           _isEnough(Cards.defaultRangedCard())) {
+        if (!isFirstCard)
+          await Future.delayed(Duration(seconds: duration), () => {});
+        GameContext.cardsBlock.opponentCards.add(CardItem(
+            Cards.defaultRangedCard(), GameContext.cardsBlock.opponentCard,
+            isOpponent: true));
         dropCard(cpuHand.removeAt(cpuHand.indexOf(Cards.defaultRangedCard())));
       } else if (cpuHand.contains(Cards.defaultShieldCard()) &&
           _isEnough(Cards.defaultShieldCard())) {
+        if (!isFirstCard)
+          await Future.delayed(Duration(seconds: duration), () => {});
+        GameContext.cardsBlock.opponentCards.add(CardItem(
+            Cards.defaultShieldCard(), GameContext.cardsBlock.opponentCard,
+            isOpponent: true));
         dropCard(cpuHand.removeAt(cpuHand.indexOf(Cards.defaultShieldCard())));
       } else if (cpuHand.contains(Cards.defaultCurseCard()) &&
           _isEnough(Cards.defaultCurseCard())) {
+        if (!isFirstCard)
+          await Future.delayed(Duration(seconds: duration), () => {});
+        GameContext.cardsBlock.opponentCards.add(CardItem(
+            Cards.defaultCurseCard(), GameContext.cardsBlock.opponentCard,
+            isOpponent: true));
         dropCard(cpuHand.removeAt(cpuHand.indexOf(Cards.defaultCurseCard())));
       }
+      isFirstCard = false;
     }
 
     endTurn();

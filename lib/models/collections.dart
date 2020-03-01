@@ -17,35 +17,35 @@ class Cards {
       case Features.meleeDefault:
         double dmgLowTmp = this.dmgLow.toDouble();
         double dmgHighTmp = this.dmgHigh.toDouble();
-        if(player.getImprovements().isNotEmpty) {
-          for(Cards improvement in player.getImprovements()) {
-            dmgHighTmp +=  dmgHighTmp * improvement.chance;
+        if (player.getImprovements().isNotEmpty) {
+          for (Cards improvement in player.getImprovements()) {
+            dmgHighTmp += dmgHighTmp * improvement.chance;
             dmgLowTmp += dmgLowTmp * improvement.chance;
           }
         }
         return "${(dmgLowTmp).floor()}-${(dmgHighTmp).floor()}";
       case Features.rangedDefault:
         double dmgLowTmp = this.dmgLow.toDouble();
-        if(player.getImprovements().isNotEmpty) {
-          for(Cards improvement in player.getImprovements()) {
+        if (player.getImprovements().isNotEmpty) {
+          for (Cards improvement in player.getImprovements()) {
             dmgLowTmp += dmgLowTmp * improvement.chance;
           }
         }
         return "${(this.chance * 100).floor()}% ${(dmgLowTmp).floor()}";
       case Features.shieldDefault:
         double dmgLowTmp = this.dmgLow.toDouble();
-        if(player.getImprovements().isNotEmpty) {
-          for(Cards improvement in player.getImprovements()) {
-            dmgLowTmp += dmgLowTmp * improvement.chance;
-          }
-        }
+//        if(player.getImprovements().isNotEmpty) {
+//          for(Cards improvement in player.getImprovements()) {
+//            dmgLowTmp += dmgLowTmp * improvement.chance;
+//          }
+//        }
         return "+${(dmgLowTmp).floor()}";
       case Features.prepareDefault:
         return "+1И+1К";
       case Features.curseDefault:
         return "2К";
       case Features.simpleCurse:
-        return "0";
+        return "-${this.costCount}HP";
       case Features.improvementDefault:
         return "+${(this.chance * 100).floor()}%";
       case Features.lastBreathDefault:
@@ -59,25 +59,25 @@ class Cards {
       case Features.meleeDefault:
         double dmgLowTmp = this.dmgLow.toDouble();
         double dmgHighTmp = this.dmgHigh.toDouble();
-        if(player.getImprovements().isNotEmpty) {
-          for(Cards improvement in player.getImprovements()) {
-            dmgHighTmp +=  dmgHighTmp * improvement.chance;
+        if (player.getImprovements().isNotEmpty) {
+          for (Cards improvement in player.getImprovements()) {
+            dmgHighTmp += dmgHighTmp * improvement.chance;
             dmgLowTmp += dmgLowTmp * improvement.chance;
           }
         }
         return "Наносит ${(dmgLowTmp).floor()} - ${(dmgHighTmp).floor()} урона";
       case Features.rangedDefault:
         double dmgLowTmp = this.dmgLow.toDouble();
-        if(player.getImprovements().isNotEmpty) {
-          for(Cards improvement in player.getImprovements()) {
+        if (player.getImprovements().isNotEmpty) {
+          for (Cards improvement in player.getImprovements()) {
             dmgLowTmp += dmgLowTmp * improvement.chance;
           }
         }
         return "С верояьностью ${(this.chance * 100).floor()}% нанесет ${(dmgLowTmp).floor()} урона.";
       case Features.shieldDefault:
         double dmgLowTmp = this.dmgLow.toDouble();
-        if(player.getImprovements().isNotEmpty) {
-          for(Cards improvement in player.getImprovements()) {
+        if (player.getImprovements().isNotEmpty) {
+          for (Cards improvement in player.getImprovements()) {
             dmgLowTmp += dmgLowTmp * improvement.chance;
           }
         }
@@ -96,49 +96,62 @@ class Cards {
     return "Рок это круто!!!";
   }
 
-  Cards(this.id, this.name, this.chance, this.dmgLow,
-      this.dmgHigh, this.feature, this.costType, this.costCount, this.img);
+  Cards(this.id, this.name, this.chance, this.dmgLow, this.dmgHigh,
+      this.feature, this.costType, this.costCount, this.img);
 
   static List<Cards> getDefaultCollection() {
     return List.of([
-      defaultMeleeCard(), defaultMeleeCard(),
-      defaultRangedCard(), defaultRangedCard(),
-      defaultShieldCard(), defaultShieldCard(),
-      defaultCurseCard(), defaultCurseCard(),
-      defaultPrepareCard(), defaultImprovementCard()
+      defaultMeleeCard(),
+      defaultMeleeCard(),
+      defaultRangedCard(),
+      defaultRangedCard(),
+      defaultShieldCard(),
+      defaultShieldCard(),
+      defaultCurseCard(),
+      defaultCurseCard(),
+      defaultPrepareCard(),
+      defaultImprovementCard()
     ]);
   }
 
   static Cards defaultMeleeCard() {
-    return Cards(1, "Удар", 1, 2, 12, Features.meleeDefault, Cost.initiative, 2, Sprite('sword_default.png'));
+    return Cards(1, "Удар", 1, 4, 12, Features.meleeDefault, Cost.initiative, 2,
+        Sprite('sword_default.png'));
   }
 
   static Cards defaultRangedCard() {
-    return Cards(2, "Выстрел", 0.7, 10, 10, Features.rangedDefault, Cost.initiative, 2,  Sprite('arrow_default.png'));
+    return Cards(2, "Выстрел", 0.7, 10, 10, Features.rangedDefault,
+        Cost.initiative, 2, Sprite('arrow_default.png'));
   }
 
   static Cards defaultShieldCard() {
-    return Cards(3, "Щит", 1, 5, 5, Features.shieldDefault, Cost.initiative, 1,  Sprite('shield_default.png'));
+    return Cards(3, "Щит", 1, 5, 5, Features.shieldDefault, Cost.initiative, 1,
+        Sprite('shield_default.png'));
   }
 
   static Cards defaultPrepareCard() {
-    return Cards(4, "Подготовка", 1, 1, 1, Features.prepareDefault, Cost.noCost, 0,  Sprite('prepare_default.png'));
+    return Cards(4, "Подготовка", 1, 1, 1, Features.prepareDefault, Cost.noCost,
+        0, Sprite('prepare_default.png'));
   }
 
   static Cards defaultCurseCard() {
-    return Cards(5, "Проклятие", 1, 2, 2, Features.curseDefault, Cost.noCost, 0,  Sprite('curse_default.png'));
+    return Cards(5, "Проклятие", 1, 3, 3, Features.curseDefault,
+        Cost.initiative, 1, Sprite('curse_default.png'));
   }
 
   static Cards simpleCurse() {
-    return Cards(5, "Простой мусор", 1, 1, 1, Features.simpleCurse, Cost.noCost, 0,  Sprite('garbage_default.png'));
+    return Cards(6, "Мусор", 1, 1, 1, Features.simpleCurse, Cost.health, 2,
+        Sprite('garbage_default.png'));
   }
 
   static Cards defaultImprovementCard() {
-    return Cards(6, "Улучшение", 0.5, 1, 1, Features.improvementDefault, Cost.initiative, 1,  Sprite('improvement_default.png'));
+    return Cards(7, "Улучшение", 0.5, 1, 1, Features.improvementDefault,
+        Cost.initiative, 1, Sprite('improvement_default.png'));
   }
 
   static Cards defaultLastBreathCard() {
-    return Cards(7, "Последний вздох", 1, 2, 2, Features.improvementDefault, Cost.noCost, 0,  Sprite('improvement_default.png'));
+    return Cards(8, "Последний вздох", 1, 2, 2, Features.improvementDefault,
+        Cost.noCost, 0, Sprite('improvement_default.png'));
   }
 
   @override
@@ -149,14 +162,10 @@ class Cards {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Cards &&
-              runtimeType == other.runtimeType &&
-              id == other.id;
+      other is Cards && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;
-
-
 }
 
 enum Features {
@@ -164,16 +173,14 @@ enum Features {
   rangedDefault,
   shieldDefault,
   prepareDefault,
+
   ///Проклятие.
   curseDefault,
   simpleCurse,
+
   ///Улучшение.
   improvementDefault,
   lastBreathDefault
 }
 
-enum Cost {
-  initiative,
-  health,
-  noCost
-}
+enum Cost { initiative, health, noCost }
