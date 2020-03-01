@@ -7,4 +7,6 @@ class GameContext {
   static GameScreen gameScreen;
   static GameLogic gameLogic;
   static BottomBlock cardsBlock;
+
+  static bool yourTurn = true;
 }

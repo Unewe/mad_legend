@@ -1,6 +1,7 @@
 import 'package:flame/anchor.dart';
 import 'package:flame/components/text_component.dart';
 import 'package:flame/text_config.dart';
+import 'package:mad_legend/services/player-logic.dart';
 import 'package:mad_legend/screens/screen_base.dart';
 import 'package:flame/components/component.dart';
 import 'package:flame/flame.dart';
@@ -29,7 +30,7 @@ class GameScreen extends Screen {
 
   PlayerBlock leftPlayerBlock;
   PlayerBlock rightPlayerBlock;
-  TextComponent endTurnText;
+  TextComponent endTurnText, endTurnTextDisabled;
   int foregroundOpacity = 255;
 
   GameScreen(FlameGame game) : super(game) {
@@ -52,7 +53,14 @@ class GameScreen extends Screen {
 
     endTurnText = TextComponent("Конец хода",
         config: TextConfig(
-            color: Color.fromRGBO(0, 0, 0, 1), fontSize: 22, fontFamily: "YagiDouble"))
+            color: Color(0xFF46C657), fontSize: 22, fontFamily: "YagiDouble"))
+      ..anchor = Anchor.bottomRight
+      ..x = width - 15
+      ..y = height - 15;
+
+    endTurnTextDisabled = TextComponent("Конец хода",
+        config: TextConfig(
+            color: Color(0xFF38002C), fontSize: 22, fontFamily: "YagiDouble"))
       ..anchor = Anchor.bottomRight
       ..x = width - 15
       ..y = height - 15;
@@ -83,8 +91,11 @@ class GameScreen extends Screen {
       c
         ..restore()
         ..save();
-      endTurnText
-        ..render(c);
+      if (GameContext.yourTurn) {
+        endTurnText..render(c);
+      } else {
+        endTurnTextDisabled..render(c);
+      }
       c
         ..restore()
         ..save();
@@ -129,7 +140,8 @@ class GameScreen extends Screen {
     if (initiated) {
       bottomBlock.onTapDown(details);
 
-      if (endTurnText.toRect().contains(details.globalPosition)) {
+      if (endTurnText.toRect().contains(details.globalPosition) &&
+          GameContext.yourTurn) {
         endTurn();
       }
     }

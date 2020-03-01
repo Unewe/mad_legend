@@ -2,6 +2,7 @@ import 'package:flame/components/text_component.dart';
 import 'package:flame/text_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mad_legend/services/player-logic.dart';
 import 'package:mad_legend/services/game_logic.dart';
 import 'package:mad_legend/main.dart';
 import 'package:mad_legend/screens/home_screen.dart';

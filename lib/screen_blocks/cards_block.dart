@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flame/anchor.dart';
 import 'package:flame/components/component.dart';
+import 'package:flame/components/text_box_component.dart';
 import 'package:flame/components/text_component.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/text_config.dart';
@@ -24,10 +25,11 @@ class BottomBlock extends Component {
   var thirdX, thirdY;
   var fourthX, fourthY;
   var width;
-  Rect firstRect, secondRect, thirdRect, fourthRect;
+  Rect firstRect, secondRect, thirdRect, fourthRect, infoRect;
   Rect firstRectBg, secondRectBg, thirdRectBg, fourthRectBg;
   Sprite cardBg;
 
+  int infoIndex;
   Rect opponentCard, opponentCardStartPosition;
   bool opponentAnimation = false;
 
@@ -82,17 +84,36 @@ class BottomBlock extends Component {
     if (!isGameJustStarted &&
         this.gameScreen.gameLogic.leftPlayer ==
             this.gameScreen.gameLogic.current) {
-      if (firstRect != null) {
+      if (firstRect != null && selected != 0) {
         CardItem(currentCards.elementAt(0), firstRect)..render(canvas);
       }
-      if (secondRect != null) {
+      if (secondRect != null && selected != 1) {
         CardItem(currentCards.elementAt(1), secondRect)..render(canvas);
       }
-      if (thirdRect != null) {
+      if (thirdRect != null && selected != 2) {
         CardItem(currentCards.elementAt(2), thirdRect)..render(canvas);
       }
-      if (fourthRect != null) {
+      if (fourthRect != null && selected != 3) {
         CardItem(currentCards.elementAt(3), fourthRect)..render(canvas);
+      }
+
+      if (selected != null) {
+        Rect tmp;
+        if (selected == 0) {
+          tmp = firstRect;
+        } else if (selected == 1) {
+          tmp = secondRect;
+        } else if (selected == 2) {
+          tmp = thirdRect;
+        } else if (selected == 3) {
+          tmp = fourthRect;
+        }
+        CardItem(currentCards.elementAt(selected), tmp)..render(canvas);
+      }
+
+      if (infoIndex != null) {
+        CardItem(currentCards.elementAt(infoIndex), infoRect, isInfo: true)
+          ..render(canvas);
       }
     }
 
@@ -117,7 +138,7 @@ class BottomBlock extends Component {
     if (this.opponentCards.length > 0) {
       for (int i = 0; i < opponentCards.length; i++) {
         if (i == 0 || opponentCards[i - 1].speed <= 0.5)
-          opponentCards[i].update();
+          opponentCards[i].update(t);
 
         if (opponentCards[i].speed <= 0.1) {
           opponentCards.removeAt(i);
@@ -146,6 +167,11 @@ class BottomBlock extends Component {
   }
 
   onTapDown(TapDownDetails details) {
+    if (infoIndex != null && !infoRect.contains(details.globalPosition)) {
+      infoIndex = null;
+      infoRect = null;
+    }
+
     if (firstRect != null && firstRect.contains(details.globalPosition)) {
       selectedRect = firstRect;
       selected = 0;
@@ -168,11 +194,57 @@ class BottomBlock extends Component {
   }
 
   onTapUp(TapUpDetails details) {
-    selectedRect = null;
+    if (infoIndex != null) {
+      infoIndex = null;
+      infoRect = null;
+    } else if (firstRect != null &&
+        firstRect.contains(details.globalPosition) &&
+        selected == 0 &&
+        infoIndex == null) {
+      infoIndex = 0;
+      infoRect = Rect.fromLTWH(
+          firstRect.topLeft.dx - firstRect.width / 2,
+          firstRect.topLeft.dy - firstRect.height,
+          firstRect.width * 2,
+          firstRect.height * 2);
+    } else if (secondRect != null &&
+        secondRect.contains(details.globalPosition) &&
+        selected == 1 &&
+        infoIndex == null) {
+      infoIndex = 1;
+      infoRect = Rect.fromLTWH(
+          secondRect.topLeft.dx - secondRect.width / 2,
+          secondRect.topLeft.dy - secondRect.height,
+          secondRect.width * 2,
+          secondRect.height * 2);
+    } else if (thirdRect != null &&
+        thirdRect.contains(details.globalPosition) &&
+        selected == 2 &&
+        infoIndex == null) {
+      infoIndex = 2;
+      infoRect = Rect.fromLTWH(
+          thirdRect.topLeft.dx - thirdRect.width / 2,
+          thirdRect.topLeft.dy - thirdRect.height,
+          thirdRect.width * 2,
+          thirdRect.height * 2);
+    } else if (fourthRect != null &&
+        fourthRect.contains(details.globalPosition) &&
+        selected == 3 &&
+        infoIndex == null) {
+      infoIndex = 3;
+      infoRect = Rect.fromLTWH(
+          fourthRect.topLeft.dx - fourthRect.width / 2,
+          fourthRect.topLeft.dy - fourthRect.height,
+          fourthRect.width * 2,
+          fourthRect.height * 2);
+    }
     selected = null;
+    selectedRect = null;
   }
 
   onStart(DragStartDetails details) {
+    infoIndex = null;
+    infoRect = null;
     if (firstRect != null && firstRect.contains(details.globalPosition)) {
       selectedRect = firstRect;
       selected = 0;
@@ -267,8 +339,10 @@ class CardItem {
   double rotation = (Random().nextDouble() - 0.45) / 100;
   double speed = 20;
   int actualDmg = 0;
+  bool isInfo;
 
-  CardItem(this.card, this.cardRect, {this.isOpponent = false});
+  CardItem(this.card, this.cardRect,
+      {this.isOpponent = false, this.isInfo = false});
 
   render(Canvas canvas) {
     if (!isOpponent) {
@@ -278,10 +352,12 @@ class CardItem {
       ///Dmg
       TextComponent(card.getShortDescription(GameContext.gameLogic.current),
           config: TextConfig(
-              color: Colors.black, fontSize: 10, textAlign: TextAlign.right))
+              color: Colors.black,
+              fontSize: isInfo ? 20 : 10,
+              textAlign: TextAlign.right))
         ..anchor = Anchor.topRight
-        ..x = cardRect.topRight.dx - 5
-        ..y = cardRect.topRight.dy + 5
+        ..x = cardRect.topRight.dx - (isInfo ? 10 : 5)
+        ..y = cardRect.topRight.dy + (isInfo ? 10 : 5)
         ..render(canvas);
       canvas
         ..restore()
@@ -290,10 +366,12 @@ class CardItem {
       ///Cost
       TextComponent(card.costCount.toString(),
           config: TextConfig(
-              color: Colors.black, fontSize: 10, textAlign: TextAlign.right))
+              color: Colors.black,
+              fontSize: isInfo ? 20 : 10,
+              textAlign: TextAlign.right))
         ..anchor = Anchor.topLeft
-        ..x = cardRect.topLeft.dx + 5
-        ..y = cardRect.topLeft.dy + 5
+        ..x = cardRect.topLeft.dx + (isInfo ? 10 : 5)
+        ..y = cardRect.topLeft.dy + (isInfo ? 10 : 5)
         ..render(canvas);
       canvas
         ..restore()
@@ -302,14 +380,32 @@ class CardItem {
       ///Name
       TextComponent(card.name,
           config: TextConfig(
-              color: Colors.black, fontSize: 10, textAlign: TextAlign.center))
+              color: Colors.black,
+              fontSize: isInfo ? 20 : 10,
+              textAlign: TextAlign.center))
         ..anchor = Anchor.bottomCenter
         ..x = cardRect.bottomCenter.dx
-        ..y = cardRect.bottomCenter.dy - 5
+        ..y = cardRect.bottomCenter.dy - (isInfo ? 10 : 5)
         ..render(canvas);
       canvas
         ..restore()
         ..save();
+
+      if (isInfo) {
+        TextBoxComponent(card.getDescription(GameContext.gameLogic.current),
+            config: TextConfig(
+                color: Colors.black, fontSize: 20, textAlign: TextAlign.center),
+            boxConfig: TextBoxConfig(
+                maxWidth: cardRect.width, margin: 10, timePerChar: 0))
+          ..anchor = Anchor.center
+          ..x = cardRect.center.dx
+          ..y = cardRect.center.dy - 10
+          ..update(1)
+          ..render(canvas);
+        canvas
+          ..restore()
+          ..save();
+      }
     } else {
       ///Opponents cards animation !!!
       Rect opponentR = Rect.fromLTWH(-cardRect.width / 2, -cardRect.height / 2,
@@ -362,7 +458,7 @@ class CardItem {
     }
   }
 
-  update() {
+  update(double t) {
     this.cardRect = this.cardRect.translate(0, speed);
     angle += rotation;
     if (speed >= 0.1) speed -= speed * 0.085;

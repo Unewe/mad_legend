@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:mad_legend/models/collections.dart';
+import 'package:mad_legend/services/player-logic.dart';
 import 'package:mad_legend/screen_blocks/cards_block.dart';
 import 'package:mad_legend/screens/end_game_screen.dart';
 import 'package:mad_legend/screens/game_screen.dart';
@@ -45,7 +46,7 @@ class GameLogic {
         current.initiative -= card.costCount;
         break;
       case Cost.health:
-        current._health -= card.costCount;
+        current.health -= card.costCount;
         break;
       case Cost.noCost:
         break;
@@ -57,7 +58,7 @@ class GameLogic {
           current.getImprovements().forEach(
               (improvement) => dmg += (dmg * improvement.chance).round());
         }
-        current._improvements.clear();
+        current.improvements.clear();
         opponent.hit(dmg);
         break;
       case Features.rangedDefault:
@@ -65,10 +66,12 @@ class GameLogic {
           current.getImprovements().forEach(
               (improvement) => dmg += (dmg * improvement.chance).round());
         }
-        current._improvements.clear();
+        current.improvements.clear();
         opponent.hit(dmg);
         break;
       case Features.shieldDefault:
+
+        ///Убрал улучшение щита!
 //        if (current.getImprovements().length > 0) {
 //          current.getImprovements().forEach(
 //              (improvement) => dmg += (dmg * improvement.chance).round());
@@ -148,8 +151,10 @@ class GameLogic {
     current.initiative = current.defaultInitiative;
 
     if (current == rightPlayer) {
+      GameContext.yourTurn = false;
       cpuTurn();
     } else {
+      GameContext.yourTurn = true;
       gameScreen.bottomBlock.initCardsFully();
     }
   }
@@ -171,6 +176,7 @@ class GameLogic {
   }
 
   cpuTurn({bool noDelay = true}) async {
+    GameContext.yourTurn = false;
     List<Cards> cpuHand = List();
     int duration = 1;
 
@@ -264,116 +270,3 @@ class GameLogic {
     return tmp;
   }
 }
-
-class Player {
-  GameLogic _gameLogic;
-  final String name;
-  int _health;
-  int _shield;
-  PlayerClass playerClass;
-  List<Cards> _improvements = List();
-  List<Cards> _degradations = List();
-  int firstTurnInitiative;
-  int initiative;
-  int defaultInitiative;
-
-  List<Cards> cards;
-  List<Cards> currentTurnCards;
-  Cards lastBreathCard;
-
-  Player(this.name, this.playerClass) {
-    switch (playerClass) {
-      case PlayerClass.DEFAULT:
-        this._health = 30;
-        this.firstTurnInitiative = 1;
-        this.initiative = defaultInitiative = 3;
-        this._shield = 0;
-        this.cards = Cards.getDefaultCollection();
-        this.currentTurnCards = Cards.getDefaultCollection();
-        this.lastBreathCard = Cards.defaultLastBreathCard();
-        break;
-      case PlayerClass.KNIGHT:
-        this._health = 70;
-        this.firstTurnInitiative = 1;
-        this.initiative = defaultInitiative = 3;
-        this._shield = 0;
-        this.cards = Cards.getDefaultCollection();
-        this.currentTurnCards = Cards.getDefaultCollection();
-        this.lastBreathCard = Cards.defaultLastBreathCard();
-        break;
-      case PlayerClass.ARCHER:
-        this._health = 60;
-        this.firstTurnInitiative = 1;
-        this.initiative = defaultInitiative = 3;
-        this._shield = 0;
-        this.cards = Cards.getDefaultCollection();
-        this.currentTurnCards = Cards.getDefaultCollection();
-        this.lastBreathCard = Cards.defaultLastBreathCard();
-        break;
-    }
-  }
-
-  setGameLogic(GameLogic gameLogic) {
-    this._gameLogic = gameLogic;
-  }
-
-  hit(int dmg) {
-    if (dmg <= _shield) {
-      _shield -= dmg;
-      dmg = 0;
-    } else {
-      dmg -= _shield;
-      _shield = 0;
-    }
-
-    _health = _health - dmg;
-    if (_health < 8) {
-      _gameLogic.lastWord(this);
-    } else if (_health < 0) {
-      _gameLogic.endGame(this);
-    }
-  }
-
-  shieldUp(int count) {
-    this._shield += count;
-  }
-
-  getHealth() {
-    return _health;
-  }
-
-  getShield() {
-    return _shield;
-  }
-
-  addImprovement(Cards improvement) {
-    this._improvements.add(improvement);
-  }
-
-  List<Cards> getImprovements() {
-    return this._improvements;
-  }
-
-  addDegradation(Cards degradation) {
-    this._degradations.add(degradation);
-  }
-
-  List<Cards> getDegradations() {
-    return this._degradations;
-  }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Player &&
-          runtimeType == other.runtimeType &&
-          name == other.name &&
-          playerClass == other.playerClass;
-
-  @override
-  int get hashCode => name.hashCode ^ playerClass.hashCode;
-}
-
-enum PlayerClass { DEFAULT, KNIGHT, ARCHER }
-
-enum Turn { LEFT, RIGHT }

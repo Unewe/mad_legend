@@ -6,7 +6,7 @@ import 'package:flame/sprite.dart';
 import 'package:flame/text_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mad_legend/services/game_logic.dart';
+import 'package:mad_legend/services/player-logic.dart';
 import 'package:mad_legend/screens/game_screen.dart';
 
 class PlayerBlock extends PositionComponent {

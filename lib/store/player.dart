@@ -1,4 +1,4 @@
-import 'package:mad_legend/services/game_logic.dart';
+import 'package:mad_legend/services/player-logic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const gameTitle = "MadLegends";
