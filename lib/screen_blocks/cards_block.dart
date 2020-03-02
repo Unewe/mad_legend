@@ -9,6 +9,7 @@ import 'package:flame/text_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mad_legend/models/collections.dart';
+import 'package:mad_legend/screens/end_game_screen.dart';
 import 'package:mad_legend/screens/game_screen.dart';
 import 'package:mad_legend/services/game_context.dart';
 
@@ -30,6 +31,11 @@ class BottomBlock extends Component {
   Sprite cardBg;
 
   int infoIndex;
+  CardItem infoCard;
+  CardTextBox textBox = CardTextBox(
+      "Hola Mundo Hola Mundo Hola Mundo Hola Mundo Hola Mundo Hola Mundo",
+      Rect.fromLTWH(200, 200, 200, 200));
+
   Rect opponentCard, opponentCardStartPosition;
   bool opponentAnimation = false;
 
@@ -112,8 +118,7 @@ class BottomBlock extends Component {
       }
 
       if (infoIndex != null) {
-        CardItem(currentCards.elementAt(infoIndex), infoRect, isInfo: true)
-          ..render(canvas);
+        infoCard.render(canvas);
       }
     }
 
@@ -170,6 +175,7 @@ class BottomBlock extends Component {
     if (infoIndex != null && !infoRect.contains(details.globalPosition)) {
       infoIndex = null;
       infoRect = null;
+      infoCard = null;
     }
 
     if (firstRect != null && firstRect.contains(details.globalPosition)) {
@@ -197,6 +203,7 @@ class BottomBlock extends Component {
     if (infoIndex != null) {
       infoIndex = null;
       infoRect = null;
+      infoCard = null;
     } else if (firstRect != null &&
         firstRect.contains(details.globalPosition) &&
         selected == 0 &&
@@ -207,6 +214,8 @@ class BottomBlock extends Component {
           firstRect.topLeft.dy - firstRect.height,
           firstRect.width * 2,
           firstRect.height * 2);
+      infoCard =
+          CardItem(currentCards.elementAt(infoIndex), infoRect, isInfo: true);
     } else if (secondRect != null &&
         secondRect.contains(details.globalPosition) &&
         selected == 1 &&
@@ -217,6 +226,8 @@ class BottomBlock extends Component {
           secondRect.topLeft.dy - secondRect.height,
           secondRect.width * 2,
           secondRect.height * 2);
+      infoCard =
+          CardItem(currentCards.elementAt(infoIndex), infoRect, isInfo: true);
     } else if (thirdRect != null &&
         thirdRect.contains(details.globalPosition) &&
         selected == 2 &&
@@ -227,6 +238,8 @@ class BottomBlock extends Component {
           thirdRect.topLeft.dy - thirdRect.height,
           thirdRect.width * 2,
           thirdRect.height * 2);
+      infoCard =
+          CardItem(currentCards.elementAt(infoIndex), infoRect, isInfo: true);
     } else if (fourthRect != null &&
         fourthRect.contains(details.globalPosition) &&
         selected == 3 &&
@@ -237,6 +250,8 @@ class BottomBlock extends Component {
           fourthRect.topLeft.dy - fourthRect.height,
           fourthRect.width * 2,
           fourthRect.height * 2);
+      infoCard =
+          CardItem(currentCards.elementAt(infoIndex), infoRect, isInfo: true);
     }
     selected = null;
     selectedRect = null;
@@ -245,6 +260,7 @@ class BottomBlock extends Component {
   onStart(DragStartDetails details) {
     infoIndex = null;
     infoRect = null;
+    infoCard = null;
     if (firstRect != null && firstRect.contains(details.globalPosition)) {
       selectedRect = firstRect;
       selected = 0;
@@ -340,9 +356,13 @@ class CardItem {
   double speed = 20;
   int actualDmg = 0;
   bool isInfo;
+  TextBoxComponent textBoxComponent;
 
   CardItem(this.card, this.cardRect,
-      {this.isOpponent = false, this.isInfo = false});
+      {this.isOpponent = false, this.isInfo = false}) {
+    textBoxComponent = CardTextBox(
+        "${card.getDescription(GameContext.gameLogic.current)}", cardRect);
+  }
 
   render(Canvas canvas) {
     if (!isOpponent) {
@@ -392,15 +412,11 @@ class CardItem {
         ..save();
 
       if (isInfo) {
-        TextBoxComponent(card.getDescription(GameContext.gameLogic.current),
-            config: TextConfig(
-                color: Colors.black, fontSize: 20, textAlign: TextAlign.center),
-            boxConfig: TextBoxConfig(
-                maxWidth: cardRect.width, margin: 10, timePerChar: 0))
+        textBoxComponent
           ..anchor = Anchor.center
+          ..drawBackground(canvas)
           ..x = cardRect.center.dx
-          ..y = cardRect.center.dy - 10
-          ..update(1)
+          ..y = cardRect.center.dy
           ..render(canvas);
         canvas
           ..restore()
@@ -462,5 +478,23 @@ class CardItem {
     this.cardRect = this.cardRect.translate(0, speed);
     angle += rotation;
     if (speed >= 0.1) speed -= speed * 0.085;
+  }
+}
+
+class CardTextBox extends TextBoxComponent {
+  Rect rect;
+
+  CardTextBox(String text, this.rect)
+      : super(text,
+            config: TextConfig(
+                fontSize: 15.0,
+                color: Colors.white,
+                textAlign: TextAlign.center),
+            boxConfig: TextBoxConfig(maxWidth: rect.width, margin: 10));
+
+  @override
+  void drawBackground(Canvas c) {
+    c.drawRRect(RRect.fromRectAndRadius(rect, Radius.circular(10)),
+        Paint()..color = Color(0xaa000000));
   }
 }
