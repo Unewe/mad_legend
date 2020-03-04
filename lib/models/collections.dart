@@ -66,7 +66,7 @@ class Cards {
             dmgLowTmp += dmgLowTmp * improvement.chance;
           }
         }
-        return "Наносит ${(dmgLowTmp).floor()} - ${(dmgHighTmp).floor()} урона";
+        return "Наносит ${(dmgLowTmp).floor()} - ${(dmgHighTmp).floor()}\r\nурона";
       case Features.rangedDefault:
         double dmgLowTmp = this.dmgLow.toDouble();
         if (player.getImprovements().isNotEmpty) {
@@ -74,7 +74,7 @@ class Cards {
             dmgLowTmp += dmgLowTmp * improvement.chance;
           }
         }
-        return "С верояьностью ${(this.chance * 100).floor()}% нанесет ${(dmgLowTmp).floor()} урона.";
+        return "С верояьностью\r\n${(this.chance * 100).floor()}% нанесет ${(dmgLowTmp).floor()}\r\nурона.";
       case Features.shieldDefault:
         double dmgLowTmp = this.dmgLow.toDouble();
         if (player.getImprovements().isNotEmpty) {
@@ -82,17 +82,17 @@ class Cards {
             dmgLowTmp += dmgLowTmp * improvement.chance;
           }
         }
-        return "Вы получите ${(dmgLowTmp).floor()} брони.";
+        return "Вы получите\r\n${(dmgLowTmp).floor()} брони.";
       case Features.prepareDefault:
-        return "Вы получите 1 очко инициативы, и 1 карту на выбор.";
+        return "Вы получите\r\n1 очко\r\nинициативы,\r\nи 1 карту\r\nна выбор.";
       case Features.curseDefault:
-        return "Добавляет 2 карты проклятия в колоду противника.";
+        return "Добавляет\r\n2 карты\r\nпроклятия\r\nв колоду\r\nпротивника.";
       case Features.simpleCurse:
-        return "Ненужный хлам. Просто выбросите и играйте дальше";
+        return "Ненужный хлам.\r\nПросто выбросите\r\nи играйте дальше";
       case Features.improvementDefault:
-        return "Ваша следующая атака улучшена на ${(this.chance * 100).floor()}%";
+        return "Ваша следующая\r\nатака улучшена\r\nна ${(this.chance * 100).floor()}%";
       case Features.lastBreathDefault:
-        return "Наносит ${this.dmgHigh}, за каждое проклятие в колоде противника";
+        return "Наносит ${this.dmgHigh},\r\nза каждое\r\nпроклятие в\r\nколоде противника";
     }
     return "Рок это круто!!!";
   }

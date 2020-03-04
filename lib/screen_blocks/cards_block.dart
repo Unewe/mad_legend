@@ -356,13 +356,9 @@ class CardItem {
   double speed = 20;
   int actualDmg = 0;
   bool isInfo;
-  TextBoxComponent textBoxComponent;
 
   CardItem(this.card, this.cardRect,
-      {this.isOpponent = false, this.isInfo = false}) {
-    textBoxComponent = CardTextBox(
-        "${card.getDescription(GameContext.gameLogic.current)}", cardRect);
-  }
+      {this.isOpponent = false, this.isInfo = false});
 
   render(Canvas canvas) {
     if (!isOpponent) {
@@ -412,9 +408,12 @@ class CardItem {
         ..save();
 
       if (isInfo) {
-        textBoxComponent
+        TextComponent(card.getDescription(GameContext.gameLogic.current),
+            config: TextConfig(
+                color: Colors.black,
+                fontSize: 18,
+                textAlign: TextAlign.center))
           ..anchor = Anchor.center
-          ..drawBackground(canvas)
           ..x = cardRect.center.dx
           ..y = cardRect.center.dy
           ..render(canvas);
